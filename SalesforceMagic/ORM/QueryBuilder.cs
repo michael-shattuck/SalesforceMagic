@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Extensions;
+using SalesforceMagic.LinqProvider;
 
 namespace SalesforceMagic.ORM
 {
@@ -37,7 +38,7 @@ namespace SalesforceMagic.ORM
         private static void AddConditionsSet<T>(ref string query, Expression<Func<T, bool>> predicate)
         {
             if (predicate != null)
-                query = query + " WHERE " + TypeExtensions.GetLambdaString(predicate);
+                query = query + " WHERE " + SOQLVisitor.ConvertToSOQL(predicate);
         }
 
         private static void AddQueryLimit(ref string query, int limit)

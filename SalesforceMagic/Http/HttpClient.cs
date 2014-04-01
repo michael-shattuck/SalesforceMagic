@@ -22,7 +22,7 @@ namespace SalesforceMagic.Http
         /// <param name="request"></param>
         /// <exception cref="SalesforceRequestException"></exception>
         /// <returns></returns>
-        public XmlDocument PerformRequest(HttpRequest request)
+        internal XmlDocument PerformRequest(HttpRequest request)
         {
             WebRequest webRequest = GenerateWebRequest(request);
 

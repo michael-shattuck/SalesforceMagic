@@ -1,6 +1,6 @@
 ﻿namespace SalesforceMagic.ORM
 {
-    public class ObjectHydrator
+    internal static class ObjectHydrator
     {
          
     }

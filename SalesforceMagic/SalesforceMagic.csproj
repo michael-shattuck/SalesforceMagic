@@ -30,8 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FastMember">
+      <HintPath>..\packages\FastMember.1.0.0.11\lib\net40\FastMember.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,16 +54,31 @@
     <Compile Include="Http\Models\HttpConfiguration.cs" />
     <Compile Include="Http\Models\HttpRequest.cs" />
     <Compile Include="Http\RequestManager.cs" />
+    <Compile Include="Http\ResponseModels\SimpleLogin.cs" />
+    <Compile Include="LinqProvider\SOQLVisitor.cs" />
     <Compile Include="ORM\ObjectHydrator.cs" />
     <Compile Include="ORM\QueryBuilder.cs" />
     <Compile Include="ORM\RequestMapper.cs" />
+    <Compile Include="ORM\ResponseReader.cs" />
+    <Compile Include="ORM\SalesforceCommands.cs" />
+    <Compile Include="ORM\XmlRequestGenerator.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\LoginRequestTemplate.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\QueryTemplate.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\SalesforceNamespaces.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\SessionHeader.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\XmlBody.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\XmlHeader.cs" />
+    <Compile Include="ORM\XmlRequestTemplates\XmlRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SalesforceClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BulkApi\" />
-    <Folder Include="ORM\XmlTemplates\" />
     <Folder Include="RestApi\" />
     <Folder Include="SoapApi\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

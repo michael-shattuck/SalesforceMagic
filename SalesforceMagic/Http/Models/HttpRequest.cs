@@ -3,21 +3,22 @@ using SalesforceMagic.Http.Enums;
 
 namespace SalesforceMagic.Http.Models
 {
-    public class HttpRequest
+    internal class HttpRequest
     {
-        public HttpRequest()
+        internal HttpRequest()
         {
             Method = RequestType.POST;
             ContentType = "text/xml";
+            Headers = new Dictionary<string, string>();
         }
 
-        public string Url { get; set; }
-        public RequestType Method { get; set; }
-        public IEnumerable<KeyValuePair<string, string>> Headers { get; set; }
-        public string Body { get; set; }
-        public string ContentType { get; set; }
+        internal string Url { get; set; }
+        internal RequestType Method { get; set; }
+        internal Dictionary<string, string> Headers { get; set; }
+        internal string Body { get; set; }
+        internal string ContentType { get; set; }
 
-        public bool IsValid
+        internal bool IsValid
         {
             get
             {
