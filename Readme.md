@@ -58,7 +58,7 @@ Now let's actually perform the query, we'll grab 5 vAttachments and set a condit
 
 ```
 #!c#
-IEnumerable<vAttachment> attachments = client.Query<vAttachment>(x => x.S3Id != null, 5)
+var attachments = client.Query<vAttachment>(x => x.S3Id != null, 5);
 ```
 
-That's it! You can add more fields, remove fields, add more complex conditions. The sky is the limit!
+That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!
