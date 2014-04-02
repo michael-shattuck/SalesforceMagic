@@ -1,8 +1,0 @@
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\bin\Debug\SalesforceMagic.dll
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\bin\Debug\SalesforceMagic.pdb
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\obj\Debug\SalesforceMagic.dll
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\obj\Debug\SalesforceMagic.pdb
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\obj\Debug\SalesforceMagic.csprojResolveAssemblyReference.cache
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\bin\Debug\FastMember.dll
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\bin\Debug\FastMember.pdb
-C:\Users\michael.shattuck\Documents\Projects\SalesforceMagic\SalesforceMagic\bin\Debug\FastMember.xml
