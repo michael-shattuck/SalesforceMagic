@@ -18,8 +18,8 @@ public void Main()
 {
     var config = new SalesforceConfig
     {
-        Username = "corpsysapi@vivint.com.uat",
-        Password = "PdzD1oPtJso3Jeo",
+        Username = "salesforceUsername",
+        Password = "salesforcePassword",
         IsSandbox = true
     }
 
