@@ -62,3 +62,7 @@ var attachments = client.Query<vAttachment>(x => x.S3Id != null, 5);
 ```
 
 That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!
+
+### TODO ###
+* Implement the BulkApi
+* Implement Insert, Upsert, Update and Delete methods from SOAP
