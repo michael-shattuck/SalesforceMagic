@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Xml;
 using SalesforceMagic.Configuration;
 using SalesforceMagic.Entities;
-using SalesforceMagic.Extensions;
 using SalesforceMagic.Http;
 using SalesforceMagic.Http.ResponseModels;
 using SalesforceMagic.ORM;
@@ -36,8 +35,20 @@ namespace SalesforceMagic
         {
             using (HttpClient httpClient = new HttpClient())
             {
-                XmlDocument response = httpClient.PerformRequest(RequestManager.GetLoginRequest(_config));
-                SimpleLogin result = ResponseReader.ReadSimpleResponse<SimpleLogin>(response);
+                XmlDocument response;
+                SimpleLogin result;
+
+                // Fallback for security token
+                try
+                {
+                    response = httpClient.PerformRequest(RequestManager.GetLoginRequest(_config));
+                    result = ResponseReader.ReadSimpleResponse<SimpleLogin>(response);
+                }
+                catch (Exception)
+                {
+                    response = httpClient.PerformRequest(RequestManager.GetLoginRequest(_config, true));
+                    result = ResponseReader.ReadSimpleResponse<SimpleLogin>(response);
+                }
 
                 Uri instanceUrl = new Uri(result.ServerUrl);
                 _config.InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host;

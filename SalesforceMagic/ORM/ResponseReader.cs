@@ -11,17 +11,19 @@ namespace SalesforceMagic.ORM
 {
     internal static class ResponseReader
     {
+        internal static IDictionary<Type, TypeAccessor> CachedAccessors = new Dictionary<Type, TypeAccessor>();
+
         internal static T ReadSimpleResponse<T>(XmlDocument document)
         {
-            return ReadSimpleResponse<T>(GetResultNode(document));
+            return ReadSimpleResponse<T>(GetResultNode(document), document);
         }
 
-        internal static T ReadSimpleResponse<T>(XmlNode node)
+        internal static T ReadSimpleResponse<T>(XmlNode node, XmlDocument document)
         {
             Type type = typeof (T);
             bool ns = type.BaseType ==  typeof (SObject);
             T obj = Activator.CreateInstance<T>();
-            TypeAccessor accessor = TypeAccessor.Create(type);
+            TypeAccessor accessor = GetTypeAccessor(type);
 
             foreach (PropertyInfo property in type.GetProperties())
             {
@@ -33,9 +35,18 @@ namespace SalesforceMagic.ORM
             return obj;
         }
 
+        private static TypeAccessor GetTypeAccessor(Type type)
+        {
+            if (CachedAccessors.ContainsKey(type)) return CachedAccessors[type];
+            TypeAccessor accessor = TypeAccessor.Create(type);
+            CachedAccessors.Add(type, accessor);
+
+            return accessor;
+        }
+
         internal static IEnumerable<T> ReadArrayResponse<T>(XmlDocument document)
         {
-            return (from XmlNode node in GetRecordNodes(document) select ReadSimpleResponse<T>(node)).ToList();
+            return (from XmlNode node in GetRecordNodes(document) select ReadSimpleResponse<T>(node, document)).ToList();
         }
 
         private static XmlNode GetResultNode(XmlDocument document)

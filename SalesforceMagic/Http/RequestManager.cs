@@ -10,13 +10,15 @@ namespace SalesforceMagic.Http
 {
     internal static class RequestManager
     {
-        internal static HttpRequest GetLoginRequest(SalesforceConfig config)
+        internal static HttpRequest GetLoginRequest(SalesforceConfig config, bool securityToken = false)
         {
             string url = config.IsSandbox ? "https://test.salesforce.com" : "https://login.salesforce.com";
             HttpRequest request = new HttpRequest
             {
                 Url = url + config.SoapUrl,
-                Body = SalesforceCommands.Login(config.Username, config.Password),
+                Body = SalesforceCommands.Login(config.Username, securityToken 
+                    ? config.Password + config.SecurityToken 
+                    : config.Password),
                 Method = RequestType.POST,
             };
             request.Headers.Add("SOAPAction", "login");
