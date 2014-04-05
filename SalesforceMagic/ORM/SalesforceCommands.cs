@@ -1,4 +1,5 @@
-﻿using SalesforceMagic.ORM.XmlRequestTemplates;
+﻿using System.Collections.Generic;
+using SalesforceMagic.ORM.XmlRequestTemplates;
 
 namespace SalesforceMagic.ORM
 {
@@ -25,6 +26,11 @@ namespace SalesforceMagic.ORM
                     SessionId = sessionId
                 }
             });
+        }
+
+        public static string BulkInsert<T>(T[] items, string sessionId)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

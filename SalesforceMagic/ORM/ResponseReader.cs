@@ -44,9 +44,9 @@ namespace SalesforceMagic.ORM
             return accessor;
         }
 
-        internal static IEnumerable<T> ReadArrayResponse<T>(XmlDocument document)
+        internal static T[] ReadArrayResponse<T>(XmlDocument document)
         {
-            return (from XmlNode node in GetRecordNodes(document) select ReadSimpleResponse<T>(node, document)).ToList();
+            return (from XmlNode node in GetRecordNodes(document) select ReadSimpleResponse<T>(node, document)).ToArray();
         }
 
         private static XmlNode GetResultNode(XmlDocument document)
@@ -57,6 +57,11 @@ namespace SalesforceMagic.ORM
         private static XmlNodeList GetRecordNodes(XmlDocument document)
         {
             return document.GetElementsByTagName("records");
+        }
+
+        public static SalesforceResponse ReadSuccessResponse(XmlDocument response)
+        {
+            throw new NotImplementedException();
         }
     }
 }
