@@ -64,6 +64,7 @@ var attachments = client.Query<vAttachment>(x => x.S3Id != null, limit: 5);
 Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
 First let's create a list of objects we can use.
 
+```
 #!c#
 vAttachment[] attachments = new []
 {
@@ -83,12 +84,14 @@ vAttachment[] attachments = new []
 
 SOAP API: Using the SOAP api for CRUD operations is very simple. It can easily deal with individual sObjects or an array.
 
+```
 #!c#
 SalesforceResponse response = client.PerformCrudOperation(attachments, CrudOperations.Insert);
 ```
 
 BULK API: Interaction with the bulk api is slightly different. In order to use the bulk api you'll need to start a data load job:
 
+```
 #!c#
 JobInfo jobInfo = client.CreateBulkJob<vAttachment>(new JobConfig
 {
@@ -99,6 +102,7 @@ JobInfo jobInfo = client.CreateBulkJob<vAttachment>(new JobConfig
 
 Starting a job will return a JobInfo object:
 
+```
 #!c#
 public class JobInfo
 {
@@ -123,12 +127,14 @@ public class JobInfo
 
 The most important part of the object is the Id. This is used to add batches to the job:
 
+```
 #!c#
 BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);
 ```
 
 This will queue a batch operation in the specified job. It returns a BatchInfo object:
 
+```
 #!c#
 public class BatchInfo
 {
@@ -142,6 +148,7 @@ public class BatchInfo
 
 Once you have added the necessary batches to the job you will need to close it:
 
+```
 #!c#
 SalesforceResponse jobCloseResponse = client.CloseBulkJob(jobInfo.Id);
 ```
