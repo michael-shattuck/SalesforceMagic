@@ -61,8 +61,81 @@ Now let's actually perform the query, we'll grab 5 vAttachments and set a condit
 var attachments = client.Query<vAttachment>(x => x.S3Id != null, limit: 5);
 ```
 
-That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!
+Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
+First let's create a list of objects we can use.
 
-### TODO ###
-* Implement the BulkApi
-* Implement Insert, Upsert, Update and Delete methods from SOAP
+#!c#
+vAttachment[] attachments = new []
+{
+    new vAttachment
+    {
+        FileName = "Test.pdf",
+        S3Id = "123456789"
+    },
+    new vAttachment
+    {
+        FileName = "Test-2.pdf",
+        S3Id = "abcdefghij"
+    },
+    ...
+}
+```
+
+SOAP API: Using the SOAP api for CRUD operations is very simple. It can easily deal with individual sObjects or an array.
+
+#!c#
+SalesforceResponse response = client.PerformCrudOperation(attachments, CrudOperations.Insert);
+```
+
+BULK API: Interaction with the bulk api is slightly different. In order to use the bulk api you'll need to start a data load job:
+
+#!c#
+JobInfo jobInfo = client.CreateBulkJob<vAttachment>(new JobConfig
+{
+    ConcurrencyMode = ConcurrencyMode.Parallel,
+    Operation = BulkOperations.Insert
+});
+```
+
+Starting a job will return a JobInfo object:
+
+#!c#
+public class JobInfo
+{
+    public string Id { get; set; }
+    public string Operation { get; set; }
+    public string Object { get; set; }
+    public string CreatedById { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public JobState State { get; set; }
+    public ConcurrencyMode ConcurrencyMode { get; set; }
+    public string ContentType { get; set; }
+    public int NumberBatchedQueued { get; set; }
+    public int NumberBatchedInProgress { get; set; }
+    public int NumberBatchedCompleted { get; set; }
+    public int NumberBatchedFailed { get; set; }
+    public int NumberBatchedTotal { get; set; }
+    public int NumberBatchedProcessed { get; set; }
+    public int NumberRetries { get; set; }
+    public string ApiVersion { get; set; }
+}
+```
+
+The most important part of the object is the Id. This is used to add batches to the job:
+
+#!c#
+BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);
+```
+
+This will queue a batch operation in the specified job. It returns a BatchInfo object:
+
+#!c#
+```
+
+Once you have added the necessary batches to the job you will need to close it:
+
+#!c#
+SalesforceResponse jobCloseResponse = client.CloseBulkJob(jobInfo.Id);
+```
+
+That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!
