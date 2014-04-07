@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace SalesforceMagic.ORM.XmlRequestTemplates
+namespace SalesforceMagic.ORM.BaseRequestTemplates
 {
     [Serializable]
     [XmlRoot("Envelope", Namespace = SalesforceNamespaces.Envelope)]

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using SalesforceMagic.ORM.BaseRequestTemplates;
 
-namespace SalesforceMagic.ORM.XmlRequestTemplates
+namespace SalesforceMagic.SoapApi.RequestTemplates
 {
     [Serializable]
     public class LoginRequestTemplate

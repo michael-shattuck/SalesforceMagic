@@ -1,11 +1,11 @@
 ﻿using System;
+using LINQtoCSV;
 
 namespace SalesforceMagic.Attributes
 {
-    public class SalesforceNameAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class SalesforceNameAttribute : CsvColumnAttribute
     {
-        public string Name { get; set; }
-
         public SalesforceNameAttribute(string name)
         {
             Name = name;

@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
 using SalesforceMagic.Abstract;
+using SalesforceMagic.BulkApi;
+using SalesforceMagic.BulkApi.Configuration;
+using SalesforceMagic.BulkApi.Models;
 using SalesforceMagic.Configuration;
 using SalesforceMagic.Configuration.Abstract;
 using SalesforceMagic.Entities;
@@ -11,13 +12,17 @@ using SalesforceMagic.Http;
 using SalesforceMagic.Http.Models;
 using SalesforceMagic.Http.ResponseModels;
 using SalesforceMagic.ORM;
+using SalesforceMagic.SoapApi;
+using SalesforceMagic.SoapApi.Enum;
 
 namespace SalesforceMagic
 {
-    public class SalesforceClient : ISalesforceClient, IDisposable
+    public class SalesforceClient : ISalesforceClient
     {
+        #region Private Fields
         private readonly ISessionStoreProvider _sessionStore;
         private SalesforceConfig _config;
+        #endregion
 
         public SalesforceClient(ISessionStoreProvider sessionStore, SalesforceConfig config, bool login = false)
         {
@@ -33,25 +38,29 @@ namespace SalesforceMagic
             if (login) Login();
         }
 
-        public void ChangeEnvironment(SalesforceConfig config, bool login = false)
+        public virtual void ChangeEnvironment(SalesforceConfig config, bool login = false)
         {
             _config = config;
             if (login) Login();
         }
 
-        public string GetSessionId()
+        public virtual string GetSessionId()
         {
             return Login().SessionId;
         }
 
         public SalesforceSession Login()
         {
-            SalesforceSession session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
-            if (session != null) return session;
+            SalesforceSession session;
+            if (_config.UseSessionStore)
+            {
+                 session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
+                if (session != null) return session;
+            }
 
             using (HttpClient httpClient = new HttpClient())
             {
-                XmlDocument response = httpClient.PerformRequest(RequestManager.GetLoginRequest(_config));
+                XmlDocument response = httpClient.PerformRequest(SoapRequestManager.GetLoginRequest(_config));
                 SimpleLogin result = ResponseReader.ReadSimpleResponse<SimpleLogin>(response);
 
                 Uri instanceUrl = new Uri(result.ServerUrl);
@@ -61,94 +70,65 @@ namespace SalesforceMagic
                     SessionId = result.SessionId
                 };
 
-                _sessionStore.StoreSession(session);
+                if (_config.UseSessionStore)  _sessionStore.StoreSession(session);
 
                 return session;
             }
         }
 
-        public T[] Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
+        public virtual T[] Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
         {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                XmlDocument response = httpClient.PerformRequest(RequestManager.GetQueryRequest(predicate, limit, Login()));
-                T[] list = ResponseReader.ReadArrayResponse<T>(response);
-
-                return list;
-            }
+            return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(predicate, limit, Login()));
         }
 
-        public SalesforceResponse Insert<T>(T[] items)
+        public virtual SalesforceResponse PerformCrudOperation<T>(T item, CrudOperations operation) where T : SObject
         {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                XmlDocument response = httpClient.PerformRequest(RequestManager.GetInsertRequest(items, Login()));
-                SalesforceResponse salesforceResponse = ResponseReader.ReadSuccessResponse(response);
-
-                return salesforceResponse;
-            }
+            return PerformRequest<SalesforceResponse>(SoapRequestManager.GetCrudRequest(new [] { (SObject) item }, operation, Login()));
         }
 
-        public SalesforceResponse Insert<T>(T item)
+        public virtual SalesforceResponse PerformCrudOperation<T>(T[] items, CrudOperations operation) where T : SObject
         {
-            return PerformSimpleRequest(RequestManager.GetInsertRequest<T>(item, Login()));
+            return PerformRequest<SalesforceResponse>(SoapRequestManager.GetCrudRequest(items, operation, Login()));
         }
 
-        public SalesforceResponse Upsert<T>(T[] items)
+        public virtual JobInfo CreateBulkJob<T>(JobConfig config)
         {
-            HttpRequest request = items.Count() < 100
-                ? RequestManager.GetInsertRequest(items, Login())
-                : RequestManager.GetBulkInsertRequest(items, Login());
-
-            return PerformSimpleRequest(request);
+            return PerformRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()));
         }
 
-        public SalesforceResponse Upsert<T>(T item)
+        public virtual BatchInfo AddBatch<T>(T[] items, string jobId)
         {
-            return PerformSimpleRequest(RequestManager.GetUpsertRequest(item, Login()));
+            return PerformRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items, jobId, Login()));
         }
 
-        public SalesforceResponse Update<T>(T[] items)
+        public SalesforceResponse CloseBulkJob(string jobId)
         {
-            return PerformSimpleRequest(RequestManager.GetUpsertRequest(items, Login()));
+            return PerformRequest<SalesforceResponse>(BulkRequestManager.GetCloseJobRequest(jobId, Login()));
         }
 
-        public SalesforceResponse Update<T>(T item)
-        {
-            return PerformSimpleRequest(RequestManager.GetUpdateRequest(item, Login()));
-        }
+        #region Private Methods
 
-        public SalesforceResponse Delete<T>(T[] items)
-        {
-            return PerformSimpleRequest(RequestManager.GetUpdateRequest(items, Login()));
-        }
-
-        public SalesforceResponse Delete<T>(T item)
-        {
-            return PerformSimpleRequest(RequestManager.GetDeleteRequest(item, Login()));
-        }
-
-        public SalesforceResponse Delete<T>(string id)
-        {
-            return PerformSimpleRequest(RequestManager.GetDeleteRequest(id, Login()));
-        }
-
-        public SalesforceResponse Delete<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
-        {
-            return PerformSimpleRequest(RequestManager.GetDeleteRequest(predicate, Login()));
-        }
-
-        private SalesforceResponse PerformSimpleRequest(HttpRequest request)
+        private T PerformRequest<T>(HttpRequest request)
         {
             using (HttpClient httpClient = new HttpClient())
             {
                 XmlDocument response = httpClient.PerformRequest(request);
-                SalesforceResponse salesforceResponse = ResponseReader.ReadSuccessResponse(response);
-
-                return salesforceResponse;
+                return ResponseReader.ReadSimpleResponse<T>(response);
             }
         }
 
+        private T[] PerformArrayRequest<T>(HttpRequest request)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadArrayResponse<T>(response);
+            }
+        }
+
+        #endregion
+
+        #region Implementation of IDisposable
         public void Dispose()
         {
             Dispose(true);
@@ -166,5 +146,6 @@ namespace SalesforceMagic
         {
             Dispose(false); // TODO: Logout anyway?
         }
+        #endregion
     }
 }

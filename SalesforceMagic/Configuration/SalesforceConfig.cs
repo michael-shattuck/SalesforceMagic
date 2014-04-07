@@ -8,5 +8,6 @@
         public string SecurityToken { get; set; }
         public string Environment { get; set; }
         public bool LogoutOnDisposal { get; set; }
+        public bool UseSessionStore { get; set; }
     }
 }

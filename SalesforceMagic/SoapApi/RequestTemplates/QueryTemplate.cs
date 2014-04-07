@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
+using SalesforceMagic.ORM.BaseRequestTemplates;
 
-namespace SalesforceMagic.ORM.XmlRequestTemplates
+namespace SalesforceMagic.SoapApi.RequestTemplates
 {
     [Serializable]
     public class QueryTemplate

@@ -1,8 +1,8 @@
 ﻿using System.Xml;
 using System.Xml.Serialization;
-using SalesforceMagic.ORM.XmlRequestTemplates;
+using SalesforceMagic.ORM.BaseRequestTemplates;
 
-namespace SalesforceMagic.ORM
+namespace SalesforceMagic.Http
 {
     internal static class XmlRequestGenerator
     {

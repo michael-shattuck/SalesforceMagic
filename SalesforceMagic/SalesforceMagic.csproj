@@ -33,6 +33,9 @@
     <Reference Include="FastMember">
       <HintPath>..\packages\FastMember.1.0.0.11\lib\net40\FastMember.dll</HintPath>
     </Reference>
+    <Reference Include="LINQtoCSV">
+      <HintPath>..\packages\LINQtoCSV.1.5.0.0\lib\net35\LINQtoCSV.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Caching" />
@@ -46,6 +49,15 @@
   <ItemGroup>
     <Compile Include="Abstract\ISalesforceClient.cs" />
     <Compile Include="Attributes\SalesforceNameAttribute.cs" />
+    <Compile Include="BulkApi\BulkCommands.cs" />
+    <Compile Include="BulkApi\BulkRequestManager.cs" />
+    <Compile Include="BulkApi\Configuration\JobConfig.cs" />
+    <Compile Include="BulkApi\Enum\BulkOperations.cs" />
+    <Compile Include="BulkApi\Enum\ConcurrencyMode.cs" />
+    <Compile Include="BulkApi\Enum\JobState.cs" />
+    <Compile Include="BulkApi\Models\BatchInfo.cs" />
+    <Compile Include="BulkApi\Models\JobInfo.cs" />
+    <Compile Include="BulkApi\RequestTemplates\XmlBody.cs" />
     <Compile Include="Configuration\Abstract\ISessionStoreProvider.cs" />
     <Compile Include="Configuration\MemoryCacheProvider.cs" />
     <Compile Include="Configuration\SalesforceConfig.cs" />
@@ -59,31 +71,30 @@
     <Compile Include="Http\HttpClient.cs" />
     <Compile Include="Http\Models\HttpConfiguration.cs" />
     <Compile Include="Http\Models\HttpRequest.cs" />
-    <Compile Include="Http\RequestManager.cs" />
     <Compile Include="Http\ResponseModels\SimpleLogin.cs" />
     <Compile Include="LinqProvider\SOQLVisitor.cs" />
     <Compile Include="ORM\ObjectHydrator.cs" />
     <Compile Include="ORM\QueryBuilder.cs" />
-    <Compile Include="ORM\RequestMapper.cs" />
     <Compile Include="ORM\ResponseReader.cs" />
-    <Compile Include="ORM\SalesforceCommands.cs" />
-    <Compile Include="ORM\XmlRequestGenerator.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\LoginRequestTemplate.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\QueryTemplate.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\SalesforceNamespaces.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\SessionHeader.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\XmlBody.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\XmlHeader.cs" />
-    <Compile Include="ORM\XmlRequestTemplates\XmlRequest.cs" />
+    <Compile Include="SoapApi\Enum\CrudOperations.cs" />
+    <Compile Include="SoapApi\RequestTemplates\CrudTemplate.cs" />
+    <Compile Include="SoapApi\RequestTemplates\XmlBody.cs" />
+    <Compile Include="SoapApi\SoapCommands.cs" />
+    <Compile Include="Http\XmlRequestGenerator.cs" />
+    <Compile Include="BulkApi\RequestTemplates\JobTempate.cs" />
+    <Compile Include="SoapApi\RequestTemplates\LoginRequestTemplate.cs" />
+    <Compile Include="SoapApi\RequestTemplates\QueryTemplate.cs" />
+    <Compile Include="ORM\BaseRequestTemplates\SalesforceNamespaces.cs" />
+    <Compile Include="ORM\BaseRequestTemplates\SessionHeader.cs" />
+    <Compile Include="ORM\BaseRequestTemplates\XmlBody.cs" />
+    <Compile Include="ORM\BaseRequestTemplates\XmlHeader.cs" />
+    <Compile Include="ORM\BaseRequestTemplates\XmlRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SalesforceClient.cs" />
-    <Compile Include="SuccessResponse.cs" />
+    <Compile Include="SalesforceResponse.cs" />
+    <Compile Include="SoapApi\SoapRequestManager.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BulkApi\" />
-    <Folder Include="RestApi\" />
-    <Folder Include="SoapApi\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
