@@ -130,6 +130,14 @@ BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);
 This will queue a batch operation in the specified job. It returns a BatchInfo object:
 
 #!c#
+public class BatchInfo
+{
+    public string Id { get; set; }
+    public string JobId { get; set; }
+    public string State { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public int NumberRecordsProcessed { get; set; }
+}
 ```
 
 Once you have added the necessary batches to the job you will need to close it:
