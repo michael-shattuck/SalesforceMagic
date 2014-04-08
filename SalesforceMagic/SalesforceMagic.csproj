@@ -59,6 +59,7 @@
     <Compile Include="BulkApi\Models\JobInfo.cs" />
     <Compile Include="BulkApi\RequestTemplates\XmlBody.cs" />
     <Compile Include="Configuration\Abstract\ISessionStoreProvider.cs" />
+    <Compile Include="Configuration\CrudOperation.cs" />
     <Compile Include="Configuration\MemoryCacheProvider.cs" />
     <Compile Include="Configuration\SalesforceConfig.cs" />
     <Compile Include="Configuration\SalesforceSession.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="ORM\QueryBuilder.cs" />
     <Compile Include="ORM\ResponseReader.cs" />
     <Compile Include="SoapApi\Enum\CrudOperations.cs" />
+    <Compile Include="SoapApi\RequestTemplates\UpsertTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\DeleteTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\CrudTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\XmlBody.cs" />

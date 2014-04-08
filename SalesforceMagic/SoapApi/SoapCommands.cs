@@ -1,4 +1,4 @@
-﻿using SalesforceMagic.Entities;
+﻿using SalesforceMagic.Configuration;
 using SalesforceMagic.Http;
 using SalesforceMagic.ORM.BaseRequestTemplates;
 using SalesforceMagic.SoapApi.Enum;
@@ -31,9 +31,9 @@ namespace SalesforceMagic.SoapApi
             });
         }
 
-        public static string CrudOperation(SObject[] items, CrudOperations operation, string sessionId)
+        public static string CrudOperation(CrudOperation operation, string sessionId)
         {
-            XmlBody body = GetCrudBody(items, operation);
+            XmlBody body = GetCrudBody(operation);
             return XmlRequestGenerator.GenerateRequest(body, new XmlHeader
             {
                 SessionHeader = new SessionHeader
@@ -43,34 +43,35 @@ namespace SalesforceMagic.SoapApi
             });
         }
 
-        private static XmlBody GetCrudBody(SObject[] items, CrudOperations operation)
+        private static XmlBody GetCrudBody(CrudOperation operation)
         {
             XmlBody body = new XmlBody();
 
-            switch (operation)
+            switch (operation.OperationType)
             {
                 case CrudOperations.Insert:
-                    body.InsertTemplate = new CrudTemplate
+                    body.InsertTemplate = new BasicCrudTemplate
                     {
-                        SObjects = items
+                        SObjects = operation.Items
                     };
                     break;
                 case CrudOperations.Upsert:
-                    body.UpsertTemplate = new CrudTemplate
+                    body.UpsertTemplate = new UpsertTemplate
                     {
-                        SObjects = items
+                        SObjects = operation.Items,
+                        ExternalIdFieldName = operation.ExternalIdField
                     };
                     break;
                 case CrudOperations.Update:
-                    body.UpdateTemplate = new CrudTemplate
+                    body.UpdateTemplate = new BasicCrudTemplate
                     {
-                        SObjects = items
+                        SObjects = operation.Items
                     };
                     break;
                 case CrudOperations.Delete:
                     body.DeleteTemplate = new DeleteTemplate
                     {
-                        SObjects = items
+                        SObjects = operation.Items
                     };
                     break;
             }

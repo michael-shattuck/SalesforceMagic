@@ -30,6 +30,11 @@ namespace SalesforceMagic.SoapApi
         public static HttpRequest GetQueryRequest<T>(Expression<Func<T, bool>> predicate, int limit, SalesforceSession session) where T : SObject
         {
             string query = QueryBuilder.GenerateQuery(predicate, limit);
+            return GetQueryRequest(query, session);
+        }
+
+        public static HttpRequest GetQueryRequest(string query, SalesforceSession session)
+        {
             HttpRequest request = new HttpRequest
             {
                 Url = session.InstanceUrl + SoapUrl,
@@ -41,16 +46,16 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
-        public static HttpRequest GetCrudRequest(SObject[] items, CrudOperations operation, SalesforceSession session)
+        public static HttpRequest GetCrudRequest(CrudOperation operation, SalesforceSession session)
         {
-            string body = SoapCommands.CrudOperation(items, operation, session.SessionId);
+            string body = SoapCommands.CrudOperation(operation, session.SessionId);
             HttpRequest request = new HttpRequest
             {
                 Url = session.InstanceUrl + SoapUrl,
                 Body = body,
                 Method = RequestType.POST,
             };
-            request.Headers.Add("SOAPAction", operation.ToString().ToLower());
+            request.Headers.Add("SOAPAction", operation.OperationType.ToString().ToLower());
 
             return request;
         }

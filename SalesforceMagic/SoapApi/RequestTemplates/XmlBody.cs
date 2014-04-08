@@ -14,13 +14,13 @@ namespace SalesforceMagic.ORM.BaseRequestTemplates
         public QueryTemplate QueryTemplate { get; set; }
 
         [XmlElement("create", Namespace = SalesforceNamespaces.SalesforceRequest)]
-        public CrudTemplate InsertTemplate { get; set; }
+        public BasicCrudTemplate InsertTemplate { get; set; }
 
         [XmlElement("upsert", Namespace = SalesforceNamespaces.SalesforceRequest)]
-        public CrudTemplate UpsertTemplate { get; set; }
+        public UpsertTemplate UpsertTemplate { get; set; }
 
         [XmlElement("update", Namespace = SalesforceNamespaces.SalesforceRequest)]
-        public CrudTemplate UpdateTemplate { get; set; }
+        public BasicCrudTemplate UpdateTemplate { get; set; }
 
         [XmlElement("delete", Namespace = SalesforceNamespaces.SalesforceRequest)]
         public DeleteTemplate DeleteTemplate { get; set; }
