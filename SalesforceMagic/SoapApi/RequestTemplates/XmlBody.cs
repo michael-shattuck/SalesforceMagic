@@ -23,6 +23,6 @@ namespace SalesforceMagic.ORM.BaseRequestTemplates
         public CrudTemplate UpdateTemplate { get; set; }
 
         [XmlElement("delete", Namespace = SalesforceNamespaces.SalesforceRequest)]
-        public CrudTemplate DeleteTemplate { get; set; }
+        public DeleteTemplate DeleteTemplate { get; set; }
     }
 }

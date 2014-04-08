@@ -13,6 +13,8 @@ namespace SalesforceMagic.Entities
 {
     public abstract class SObject : ISalesforceObject, IXmlSerializable
     {
+        public string Id { get; set; }
+
         public XmlSchema GetSchema() { return null; }
 
         public void ReadXml(XmlReader reader) { }

@@ -68,7 +68,7 @@ namespace SalesforceMagic.SoapApi
                     };
                     break;
                 case CrudOperations.Delete:
-                    body.DeleteTemplate = new CrudTemplate
+                    body.DeleteTemplate = new DeleteTemplate
                     {
                         SObjects = items
                     };
