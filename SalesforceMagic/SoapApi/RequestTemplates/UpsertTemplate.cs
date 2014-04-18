@@ -14,4 +14,4 @@ namespace SalesforceMagic.SoapApi.RequestTemplates
         [XmlElement("sObjects", Namespace = SalesforceNamespaces.SalesforceRequest, Order = 2)]
         public SObject[] SObjects { get; set; }
     }
-}
+}   

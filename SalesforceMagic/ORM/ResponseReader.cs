@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -26,9 +27,17 @@ namespace SalesforceMagic.ORM
 
             foreach (PropertyInfo property in type.GetProperties())
             {
+                Type propertyType = property.PropertyType;
                 string name = ns ? "sf:" + property.GetName() : property.GetName();
                 string value = node.GetValue(name);
-                if (value != null) accessor[obj, property.Name] = value;
+
+                if (value == null) continue;
+                if (propertyType == typeof(string)) accessor[obj, property.Name] = value;
+                if (propertyType == typeof(bool)) accessor[obj, property.Name] = Convert.ToBoolean(value);
+                if (propertyType == typeof(int)) accessor[obj, property.Name] = Convert.ToInt32(value);
+                if (propertyType == typeof(double)) accessor[obj, property.Name] = Convert.ToDouble(value);
+                if (propertyType == typeof(decimal)) accessor[obj, property.Name] = Convert.ToDecimal(value);
+                if (propertyType == typeof(DateTime)) accessor[obj, property.Name] = Convert.ToDateTime(value);
             }
 
             return obj;

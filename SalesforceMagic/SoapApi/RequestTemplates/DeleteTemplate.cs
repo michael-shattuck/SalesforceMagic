@@ -13,9 +13,9 @@ namespace SalesforceMagic.SoapApi.RequestTemplates
         public SObject[] SObjects { get; set; }
 
         [XmlElement("ids", Namespace = SalesforceNamespaces.SalesforceRequest)]
-        public string Ids
+        public string[] Ids
         {
-            get { return string.Join(",", SObjects.Select(x => x.Id)); }
+            get { return SObjects.Select(x => x.Id).ToArray(); }
             set { } // Apparently this is needed for XML serialization...
         }
     }
