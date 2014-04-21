@@ -3,7 +3,7 @@
 While dealing with Salesforce I realized that there aren't any decent libraries that can communicate using the various APIs. This library is intended to be a simple, solid, and small library that encompasses and provides access to the SOAP, REST and Bulk API's for Salesforce. The magic lies in the library's ability to dynamically generate SOQL queries based on generic types and also the dynamic generation of the SOAP wsdl. You will never have to replace or update a wsdl again.
 
 ### Installation ###
-[https://www.nuget.org/packages/SalesforceMagic/](Nuget) => PM> Install-Package SalesforceMagic
+[Nuget](https://www.nuget.org/packages/SalesforceMagic) => PM> Install-Package SalesforceMagic
 
 ### Currently Implemented Features ###
 * Dynamic SOQL query generation based on generic type interpretation
