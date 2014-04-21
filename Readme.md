@@ -6,14 +6,14 @@ While dealing with Salesforce I realized that there aren't any decent libraries 
 * Dynamic SOQL query generation based on generic type interpretation
 * Expression and predicate visitation allowing users to create both simple and complicated where conditions using powerful lambda expressions.
 * SOAP Login and Session ID Retrieval
-* SOAP Query based o generic types.
+* SOAP Query based on generic types.
+* Re-implementable storage for reusing session details.
 
 ### Example Usage ###
 
 Start by setting up the configuration and Salesforce client:
 
 ```
-#!c#
 public void Main()
 {
     var config = new SalesforceConfig
@@ -33,14 +33,12 @@ public void Main()
 Let's grab the session id:
 
 ```
-#!c#
 string sessionId = client.GetSessionId();
 ```
 
 We can use the session id if we want, but the method automatically uses the last session id retrieved as long as it is not stale. For example, let's grab 5 vAttachments. We'll start by creating a C# class to represent out vAttachment. SalesforceMagic provides custom attributes that allow you to have pretty and simple classes while mapping to custom field names in Salesforce:
 
 ```
-#!c#
 [SalesforceName("vAttachment__c")]
 public class vAttachment : SObject
 {
@@ -57,7 +55,6 @@ public class vAttachment : SObject
 Now let's actually perform the query, we'll grab 5 vAttachments and set a condition to ensure that the records we retrieve have the S3Id field set:
 
 ```
-#!c#
 var attachments = client.Query<vAttachment>(x => x.S3Id != null, limit: 5);
 ```
 
@@ -65,7 +62,6 @@ Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
 First let's create a list of objects we can use.
 
 ```
-#!c#
 vAttachment[] attachments = new []
 {
     new vAttachment
@@ -85,14 +81,12 @@ vAttachment[] attachments = new []
 SOAP API: Using the SOAP api for CRUD operations is very simple. It can easily deal with individual sObjects or an array.
 
 ```
-#!c#
 SalesforceResponse response = client.PerformCrudOperation(attachments, CrudOperations.Insert);
 ```
 
 BULK API: Interaction with the bulk api is slightly different. In order to use the bulk api you'll need to start a data load job:
 
 ```
-#!c#
 JobInfo jobInfo = client.CreateBulkJob<vAttachment>(new JobConfig
 {
     ConcurrencyMode = ConcurrencyMode.Parallel,
@@ -103,7 +97,6 @@ JobInfo jobInfo = client.CreateBulkJob<vAttachment>(new JobConfig
 Starting a job will return a JobInfo object:
 
 ```
-#!c#
 public class JobInfo
 {
     public string Id { get; set; }
@@ -128,14 +121,12 @@ public class JobInfo
 The most important part of the object is the Id. This is used to add batches to the job:
 
 ```
-#!c#
 BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);
 ```
 
 This will queue a batch operation in the specified job. It returns a BatchInfo object:
 
 ```
-#!c#
 public class BatchInfo
 {
     public string Id { get; set; }
@@ -149,7 +140,6 @@ public class BatchInfo
 Once you have added the necessary batches to the job you will need to close it:
 
 ```
-#!c#
 SalesforceResponse jobCloseResponse = client.CloseBulkJob(jobInfo.Id);
 ```
 
