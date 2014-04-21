@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Xml;
@@ -78,12 +79,12 @@ namespace SalesforceMagic
             }
         }
 
-        public virtual T[] Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
+        public virtual IEnumerable<T> Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
         {
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(predicate, limit, Login()));
         }
 
-        public virtual T[] Query<T>(string query)
+        public virtual IEnumerable<T> Query<T>(string query)
         {
             // TODO: Validate query
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
@@ -99,9 +100,9 @@ namespace SalesforceMagic
             return Query<T>(query).FirstOrDefault();
         }
 
-        public virtual SalesforceResponse Crud<T>(CrudOperation operation) where T : SObject
+        public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
         {
-            if (operation.Items.Length > 200)
+            if (operation.Items.Count() > 200)
                 throw new SalesforceRequestException("The SOAP api only allows the modification of up tp 200 records. " +
                                                      "Please use the Bulk api methods for any operation that requires " +
                                                      "higher limits.");
@@ -112,9 +113,9 @@ namespace SalesforceMagic
             return PerformRequest<SalesforceResponse>(SoapRequestManager.GetCrudRequest(operation, Login()));
         }
 
-        public virtual SalesforceResponse Insert<T>(T[] items) where T : SObject
+        public virtual SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject
         {
-            return Crud<T>(new CrudOperation
+            return Crud(new CrudOperation<T>
             {
                 Items = items,
                 OperationType = CrudOperations.Insert
@@ -123,12 +124,12 @@ namespace SalesforceMagic
 
         public virtual SalesforceResponse Insert<T>(T item) where T : SObject
         {
-            return Insert(new [] {item});
+            return Insert<T>(new[] { item });
         }
 
-        public virtual SalesforceResponse Upsert<T>(T[] items, string externalIdField) where T : SObject
+        public virtual SalesforceResponse Upsert<T>(IEnumerable<T> items, string externalIdField) where T : SObject
         {
-            return Crud<T>(new CrudOperation
+            return Crud(new CrudOperation<T>
             {
                 Items = items,
                 OperationType = CrudOperations.Upsert,
@@ -138,12 +139,12 @@ namespace SalesforceMagic
 
         public virtual SalesforceResponse Upsert<T>(T item, string externalIdField) where T : SObject
         {
-            return Upsert(new[] { item }, externalIdField);
+            return Upsert<T>(new[] { item }, externalIdField);
         }
 
-        public virtual SalesforceResponse Update<T>(T[] items) where T : SObject
+        public virtual SalesforceResponse Update<T>(IEnumerable<T> items) where T : SObject
         {
-            return Crud<T>(new CrudOperation
+            return Crud(new CrudOperation<T>
             {
                 Items = items,
                 OperationType = CrudOperations.Update
@@ -152,12 +153,12 @@ namespace SalesforceMagic
 
         public virtual SalesforceResponse Update<T>(T item) where T : SObject
         {
-            return Update(new[] { item });
+            return Update<T>(new[] { item });
         }
 
-        public virtual SalesforceResponse Delete<T>(T[] items) where T : SObject
+        public virtual SalesforceResponse Delete<T>(IEnumerable<T> items) where T : SObject
         {
-            return Crud<T>(new CrudOperation
+            return Crud(new CrudOperation<T>
             {
                 Items = items,
                 OperationType = CrudOperations.Delete
@@ -166,7 +167,7 @@ namespace SalesforceMagic
 
         public virtual SalesforceResponse Delete<T>(T item) where T : SObject
         {
-            return Delete(new[] { item });
+            return Delete<T>(new[] { item });
         }
 
         public virtual JobInfo CreateBulkJob<T>(JobConfig config)
@@ -174,9 +175,9 @@ namespace SalesforceMagic
             return PerformRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()));
         }
 
-        public virtual BatchInfo AddBatch<T>(T[] items, string jobId)
+        public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId)
         {
-            return PerformRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items, jobId, Login()));
+            return PerformRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()));
         }
 
         public virtual SalesforceResponse CloseBulkJob(string jobId)
@@ -195,7 +196,7 @@ namespace SalesforceMagic
             }
         }
 
-        private T[] PerformArrayRequest<T>(HttpRequest request)
+        private IEnumerable<T> PerformArrayRequest<T>(HttpRequest request)
         {
             using (HttpClient httpClient = new HttpClient())
             {

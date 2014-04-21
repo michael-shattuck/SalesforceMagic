@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using SalesforceMagic.BulkApi.Configuration;
 using SalesforceMagic.BulkApi.Models;
@@ -19,8 +20,8 @@ namespace SalesforceMagic.Abstract
 
         #region Query Methods
 
-        T[] Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject;
-        T[] Query<T>(string query);
+        IEnumerable<T> Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject;
+        IEnumerable<T> Query<T>(string query);
         T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject;
         T QuerySingle<T>(string query);
 
@@ -28,14 +29,14 @@ namespace SalesforceMagic.Abstract
 
         #region Crud Methods
 
-        SalesforceResponse Crud<T>(CrudOperation operation) where T : SObject;
-        SalesforceResponse Insert<T>(T[] items) where T : SObject;
+        SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject;
+        SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject;
         SalesforceResponse Insert<T>(T item) where T : SObject;
-        SalesforceResponse Upsert<T>(T[] items, string externalIdField) where T : SObject;
+        SalesforceResponse Upsert<T>(IEnumerable<T> items, string externalIdField) where T : SObject;
         SalesforceResponse Upsert<T>(T item, string externalIdField) where T : SObject;
-        SalesforceResponse Update<T>(T[] items) where T : SObject;
+        SalesforceResponse Update<T>(IEnumerable<T> items) where T : SObject;
         SalesforceResponse Update<T>(T item) where T : SObject;
-        SalesforceResponse Delete<T>(T[] items) where T : SObject;
+        SalesforceResponse Delete<T>(IEnumerable<T> items) where T : SObject;
         SalesforceResponse Delete<T>(T item) where T : SObject;
 
         #endregion
@@ -43,7 +44,7 @@ namespace SalesforceMagic.Abstract
         #region Bulk Data Methods
 
         JobInfo CreateBulkJob<T>(JobConfig config);
-        BatchInfo AddBatch<T>(T[] items, string jobId);
+        BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId);
         SalesforceResponse CloseBulkJob(string jobId);
 
         #endregion

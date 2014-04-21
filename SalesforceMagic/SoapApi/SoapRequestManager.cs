@@ -46,7 +46,7 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
-        public static HttpRequest GetCrudRequest(CrudOperation operation, SalesforceSession session)
+        public static HttpRequest GetCrudRequest<T>(CrudOperation<T> operation, SalesforceSession session) where T : SObject
         {
             string body = SoapCommands.CrudOperation(operation, session.SessionId);
             HttpRequest request = new HttpRequest

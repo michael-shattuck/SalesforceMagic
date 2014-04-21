@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using SalesforceMagic.Entities;
@@ -10,7 +11,7 @@ namespace SalesforceMagic.SoapApi.RequestTemplates
     public class DeleteTemplate
     {
         [XmlIgnore]
-        public SObject[] SObjects { get; set; }
+        public IEnumerable<SObject> SObjects { get; set; }
 
         [XmlElement("ids", Namespace = SalesforceNamespaces.SalesforceRequest)]
         public string[] Ids

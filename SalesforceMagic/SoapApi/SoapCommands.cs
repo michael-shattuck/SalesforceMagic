@@ -1,4 +1,5 @@
 ﻿using SalesforceMagic.Configuration;
+using SalesforceMagic.Entities;
 using SalesforceMagic.Http;
 using SalesforceMagic.ORM.BaseRequestTemplates;
 using SalesforceMagic.SoapApi.Enum;
@@ -31,7 +32,7 @@ namespace SalesforceMagic.SoapApi
             });
         }
 
-        public static string CrudOperation(CrudOperation operation, string sessionId)
+        public static string CrudOperation<T>(CrudOperation<T> operation, string sessionId) where T : SObject
         {
             XmlBody body = GetCrudBody(operation);
             return XmlRequestGenerator.GenerateRequest(body, new XmlHeader
@@ -43,7 +44,7 @@ namespace SalesforceMagic.SoapApi
             });
         }
 
-        private static XmlBody GetCrudBody(CrudOperation operation)
+        private static XmlBody GetCrudBody<T>(CrudOperation<T> operation) where T : SObject
         {
             XmlBody body = new XmlBody();
 

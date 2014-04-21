@@ -16,6 +16,12 @@ namespace SalesforceMagic.LinqProvider
         {
             switch (expression.NodeType)
             {
+                case ExpressionType.Not:
+                    return VisitExpression(Expression.NotEqual(((UnaryExpression)expression).Operand, Expression.Constant(true)));
+                case ExpressionType.IsTrue:
+                    return VisitBinary(expression as BinaryExpression, "=");
+                case ExpressionType.IsFalse:
+                    return VisitBinary(expression as BinaryExpression, "!=");
                 case ExpressionType.GreaterThanOrEqual:
                     return VisitBinary(expression as BinaryExpression, ">=");
                 case ExpressionType.LessThanOrEqual:
@@ -33,6 +39,11 @@ namespace SalesforceMagic.LinqProvider
                 case ExpressionType.Lambda:
                     return VisitLambda(expression as LambdaExpression);
                 case ExpressionType.MemberAccess:
+                    // TODO: I don't like this
+                    if (expression.Type == typeof(bool))
+                    {
+                        return ((MemberExpression) expression).Member.Name + " = True";
+                    }
                     return VisitMember(expression as MemberExpression);
                 case ExpressionType.Constant:
                     return VisitConstant(expression as ConstantExpression);
@@ -164,11 +175,6 @@ namespace SalesforceMagic.LinqProvider
         }
 
         private static string VisitTypeBinary(TypeBinaryExpression node)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static string VisitUnary(UnaryExpression node)
         {
             throw new NotImplementedException();
         }
