@@ -64,7 +64,7 @@ namespace SalesforceMagic
             using (HttpClient httpClient = new HttpClient())
             {
                 XmlDocument response = httpClient.PerformRequest(SoapRequestManager.GetLoginRequest(_config));
-                SimpleLogin result = ResponseReader.ReadSimpleResponse<SimpleLogin>(response);
+                SimpleLogin result = ResponseReader.ReadGenericResponse<SimpleLogin>(response);
 
                 Uri instanceUrl = new Uri(result.ServerUrl);
                 session = new SalesforceSession
@@ -110,7 +110,7 @@ namespace SalesforceMagic
             if (operation.OperationType == CrudOperations.Upsert && string.IsNullOrEmpty(operation.ExternalIdField))
                 throw new SalesforceRequestException("Upsert requests required an external ID name field to be specified.");
 
-            return PerformRequest<SalesforceResponse>(SoapRequestManager.GetCrudRequest(operation, Login()));
+            return PerformSimpleRequest(SoapRequestManager.GetCrudRequest(operation, Login()));
         }
 
         public virtual SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject
@@ -172,27 +172,36 @@ namespace SalesforceMagic
 
         public virtual JobInfo CreateBulkJob<T>(JobConfig config)
         {
-            return PerformRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()));
+            return PerformGenericRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()));
         }
 
         public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId)
         {
-            return PerformRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()));
+            return PerformGenericRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()));
         }
 
         public virtual SalesforceResponse CloseBulkJob(string jobId)
         {
-            return PerformRequest<SalesforceResponse>(BulkRequestManager.GetCloseJobRequest(jobId, Login()));
+            return PerformGenericRequest<SalesforceResponse>(BulkRequestManager.GetCloseJobRequest(jobId, Login()));
         }
 
         #region Private Methods
 
-        private T PerformRequest<T>(HttpRequest request)
+        private T PerformGenericRequest<T>(HttpRequest request)
         {
             using (HttpClient httpClient = new HttpClient())
             {
                 XmlDocument response = httpClient.PerformRequest(request);
-                return ResponseReader.ReadSimpleResponse<T>(response);
+                return ResponseReader.ReadGenericResponse<T>(response);
+            }
+        }
+
+        private SalesforceResponse PerformSimpleRequest(HttpRequest request)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadSimpleResponse(response);
             }
         }
 

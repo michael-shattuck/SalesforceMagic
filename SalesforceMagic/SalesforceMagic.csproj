@@ -82,6 +82,7 @@
     <Compile Include="SoapApi\RequestTemplates\DeleteTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\CrudTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\XmlBody.cs" />
+    <Compile Include="SoapApi\Responses\RecordResult.cs" />
     <Compile Include="SoapApi\SoapCommands.cs" />
     <Compile Include="Http\XmlRequestGenerator.cs" />
     <Compile Include="BulkApi\RequestTemplates\JobTempate.cs" />
@@ -97,11 +98,22 @@
     <Compile Include="SalesforceResponse.cs" />
     <Compile Include="SoapApi\SoapRequestManager.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="PostBuildScripts\NuGet.exe" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
+    <None Include="PostBuildScripts\New-NuGetPackage.ps1" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.bat" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+ECHO Building NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)PostBuildScripts\BuildNewPackage-RanAutomatically.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -Configuration '$(ConfigurationName)' -Platform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

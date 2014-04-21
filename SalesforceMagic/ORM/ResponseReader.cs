@@ -4,18 +4,45 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Linq;
 using FastMember;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Extensions;
+using SalesforceMagic.SoapApi.Responses;
 
 namespace SalesforceMagic.ORM
 {
     internal static class ResponseReader
     {
-
-        internal static T ReadSimpleResponse<T>(XmlDocument document)
+        internal static SalesforceResponse ReadSimpleResponse(XmlDocument document)
         {
-            return ReadSimpleResponse<T>(GetResultNode(document), document);
+            SalesforceResponse response = new SalesforceResponse();
+            XmlNodeList results = GetNamedNodes(document, "result");
+
+            if (results.Count > 1)
+            {
+                foreach (XmlNode node in results)
+                {
+                    RecordResult result = ReadSimpleResponse<RecordResult>(node, document);
+                    response.Results.Add(result);
+
+                    if (!result.Success)
+                    {
+                        response.Errors.Add(result.Message);
+                    }
+                }
+            }
+            else
+            {
+                response.Result = ReadSimpleResponse<RecordResult>(results[0], document);
+            }
+
+            return response;
+        }
+
+        internal static T ReadGenericResponse<T>(XmlDocument document)
+        {
+            return ReadSimpleResponse<T>(GetNamedNodes(document, "result")[0], document);
         }
 
         internal static T ReadSimpleResponse<T>(XmlNode node, XmlDocument document)
@@ -31,7 +58,16 @@ namespace SalesforceMagic.ORM
                 string name = ns ? "sf:" + property.GetName() : property.GetName();
                 string value = node.GetValue(name);
 
-                if (value == null) continue;
+                if (value == null)
+                {
+                    IEnumerable<XElement> nodes = GetNamedNodes(node, name);
+                    if (nodes == null || !nodes.Any()) continue;
+                    XElement child = nodes.FirstOrDefault();
+                    if (child == null) continue;
+
+                    value = child.Value;
+                };
+
                 if (propertyType == typeof(string)) accessor[obj, property.Name] = value;
                 if (propertyType == typeof(bool)) accessor[obj, property.Name] = Convert.ToBoolean(value);
                 if (propertyType == typeof(int)) accessor[obj, property.Name] = Convert.ToInt32(value);
@@ -45,22 +81,18 @@ namespace SalesforceMagic.ORM
 
         internal static T[] ReadArrayResponse<T>(XmlDocument document)
         {
-            return (from XmlNode node in GetRecordNodes(document) select ReadSimpleResponse<T>(node, document)).ToArray();
+            return (from XmlNode node in GetNamedNodes(document, "records") select ReadSimpleResponse<T>(node, document)).ToArray();
         }
 
-        private static XmlNode GetResultNode(XmlDocument document)
+        private static XmlNodeList GetNamedNodes(XmlDocument document, string name)
         {
-            return document.GetElementsByTagName("result")[0];
+            return document.GetElementsByTagName(name);
         }
 
-        private static XmlNodeList GetRecordNodes(XmlDocument document)
+        private static XElement[] GetNamedNodes(XmlNode node, string name)
         {
-            return document.GetElementsByTagName("records");
-        }
-
-        public static SalesforceResponse ReadSuccessResponse(XmlDocument response)
-        {
-            throw new NotImplementedException();
+            XDocument document = XDocument.Parse(node.OuterXml);
+            return document.Descendants().Where(x => x.Name.LocalName == name).ToArray();
         }
     }
 }

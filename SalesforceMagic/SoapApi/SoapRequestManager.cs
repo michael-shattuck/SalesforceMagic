@@ -5,7 +5,6 @@ using SalesforceMagic.Entities;
 using SalesforceMagic.Http.Enums;
 using SalesforceMagic.Http.Models;
 using SalesforceMagic.ORM;
-using SalesforceMagic.SoapApi.Enum;
 
 namespace SalesforceMagic.SoapApi
 {
