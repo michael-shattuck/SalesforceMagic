@@ -110,3 +110,5 @@ UpgradeLog*.XML
 # Nuget Packages
 packages/*
 TestApplication*
+
+ConsoleApplication*
