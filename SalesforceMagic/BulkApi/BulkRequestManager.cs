@@ -16,7 +16,8 @@ namespace SalesforceMagic.BulkApi
             {
                 Url = session.InstanceUrl + BulkApiUrl,
                 Body = BulkCommands.CreateJob(config, typeof(T).Name),
-                Method = RequestType.POST
+                Method = RequestType.POST,
+                ContentType = "application/xml"
             };
             request.Headers.Add("X-SFDC-Session", session.SessionId);
 
@@ -29,7 +30,8 @@ namespace SalesforceMagic.BulkApi
             {
                 Url = session.InstanceUrl + BulkApiUrl + "/" + jobId,
                 Body = BulkCommands.CloseJob(),
-                Method = RequestType.POST
+                Method = RequestType.POST,
+                ContentType = "application/xml"
             };
             request.Headers.Add("X-SFDC-Session", session.SessionId);
 
