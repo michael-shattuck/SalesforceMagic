@@ -57,9 +57,11 @@ namespace SalesforceMagic
             SalesforceSession session;
             if (_config.UseSessionStore)
             {
-                 session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
+                session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
                 if (session != null) return session;
             }
+            
+            if (_config.Session != null) return _config.Session;
 
             using (HttpClient httpClient = new HttpClient())
             {
@@ -73,7 +75,8 @@ namespace SalesforceMagic
                     SessionId = result.SessionId
                 };
 
-                if (_config.UseSessionStore)  _sessionStore.StoreSession(session);
+                if (_config.UseSessionStore) _sessionStore.StoreSession(session);
+                _config.Session = session;
 
                 return session;
             }

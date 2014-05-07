@@ -17,7 +17,10 @@ namespace SalesforceMagic.Extensions
 
         internal static IEnumerable<string> GetNames(this PropertyInfo[] infos)
         {
-            return infos.Select(x => x.GetName());
+            List<string> names = new List<string> { GetName(infos.FirstOrDefault(x => x.Name == "Id")) };
+            names.AddRange(infos.Where(x => x.Name != "Id").Select(x => x.GetName()));
+
+            return names;
         }
 
         internal static string GetName(this PropertyInfo info)
@@ -36,6 +39,6 @@ namespace SalesforceMagic.Extensions
         {
             var result = node[name];
             return result != null ? result.InnerText : null;
-        } 
+        }
     }
 }

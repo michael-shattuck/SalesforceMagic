@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 using SalesforceMagic.Extensions;
 
 namespace SalesforceMagic.LinqProvider
@@ -74,7 +75,22 @@ namespace SalesforceMagic.LinqProvider
 
         private static string VisitMember(MemberExpression node)
         {
-            return ((PropertyInfo)node.Member).GetName();
+            try
+            {
+                return ((PropertyInfo)node.Member).GetName();
+            }
+            catch (Exception e)
+            {
+                ConstantExpression captureConst = (ConstantExpression)node.Expression;
+                object value = ((FieldInfo)node.Member).GetValue(captureConst.Value);
+
+                if (value is string)
+                    return "'" + value + "'";
+                if (value == null)
+                    return "null";
+
+                throw new InvalidDataContractException();
+            }
         }
 
         #region Non-Implemented Methods

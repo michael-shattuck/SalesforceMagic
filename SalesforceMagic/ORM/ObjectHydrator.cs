@@ -6,13 +6,14 @@ namespace SalesforceMagic.ORM
 {
     public static class ObjectHydrator
     {
-        internal static IDictionary<Type, TypeAccessor> CachedAccessors = new Dictionary<Type, TypeAccessor>();
+        internal static IDictionary<string, TypeAccessor> CachedAccessors = new Dictionary<string, TypeAccessor>();
 
         public static TypeAccessor GetAccessor(Type type)
         {
-            if (CachedAccessors.ContainsKey(type)) return CachedAccessors[type];
+            string name = type.Name;
+            if (CachedAccessors.ContainsKey(name)) return CachedAccessors[name];
             TypeAccessor accessor = TypeAccessor.Create(type);
-            CachedAccessors.Add(type, accessor);
+            CachedAccessors.Add(name, accessor);
 
             return accessor;
         }
