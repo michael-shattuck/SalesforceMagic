@@ -21,7 +21,7 @@ namespace SalesforceMagic.Entities
 
         public void WriteXml(XmlWriter writer)
         {
-            // TODO: Implement robust serialization
+            // TODO: Implement more robust serialization
             Type type = GetType();
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
             writer.WriteElementString("type", type.GetName());

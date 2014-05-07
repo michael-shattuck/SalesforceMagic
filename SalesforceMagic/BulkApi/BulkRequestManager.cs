@@ -8,7 +8,7 @@ namespace SalesforceMagic.BulkApi
 {
     internal static class BulkRequestManager
     {
-        internal static string BulkApiUrl = "/services/async/24.0/job";
+        internal static string BulkApiUrl = "/services/async/24.0/job"; // TODO: Make version # dynamic or configurable
 
         public static HttpRequest GetStartJobRequest<T>(JobConfig config, SalesforceSession session)
         {

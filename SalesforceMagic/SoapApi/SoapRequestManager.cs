@@ -10,7 +10,7 @@ namespace SalesforceMagic.SoapApi
 {
     internal class SoapRequestManager
     {
-        internal static string SoapUrl = "/services/Soap/u/24.0";
+        internal static string SoapUrl = "/services/Soap/u/24.0"; // TODO: Make version # dynamic or configurable
 
         internal static HttpRequest GetLoginRequest(SalesforceConfig config)
         {

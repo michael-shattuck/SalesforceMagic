@@ -20,6 +20,9 @@ using SalesforceMagic.SoapApi.Enum;
 
 namespace SalesforceMagic
 {
+    // TODO: Configure for multiple environments
+    // TODO: Add ability to set or pass in session id
+    // TODO: Map responses in a more meaningfull manner
     public class SalesforceClient : ISalesforceClient
     {
         #region Private Fields

@@ -4,7 +4,6 @@ using LINQtoCSV;
 using SalesforceMagic.BulkApi.Configuration;
 using SalesforceMagic.BulkApi.RequestTemplates;
 using SalesforceMagic.Http;
-using SalesforceMagic.ORM;
 using SalesforceMagic.ORM.BaseRequestTemplates;
 
 namespace SalesforceMagic.BulkApi

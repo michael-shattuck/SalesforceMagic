@@ -32,7 +32,7 @@ namespace SalesforceMagic.Configuration
 
         public bool StoreSession(SalesforceSession session)
         {
-            string key = GenerateCacheKey(session.Environment);
+            string key = GenerateCacheKey(session.Environment ?? "Default");
             if (_store.Contains(key)) _store.Remove(key);
 
             return _store.Add(key, session, new CacheItemPolicy
