@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace SalesforceMagic.LinqProvider
             return VisitExpression(expression);
         }
 
-        private static string VisitExpression(Expression expression)
+        private static string VisitExpression(Expression expression, bool valueExpression = false)
         {
             switch (expression.NodeType)
             {
@@ -43,9 +44,9 @@ namespace SalesforceMagic.LinqProvider
                     // TODO: I don't like this
                     if (expression.Type == typeof(bool))
                     {
-                        return ((MemberExpression) expression).Member.Name + " = True";
+                        return ((MemberExpression)expression).Member.Name + " = True";
                     }
-                    return VisitMember(expression as MemberExpression);
+                    return VisitMember(expression as MemberExpression, valueExpression);
                 case ExpressionType.Constant:
                     return VisitConstant(expression as ConstantExpression);
                 default:
@@ -55,7 +56,7 @@ namespace SalesforceMagic.LinqProvider
 
         private static string VisitBinary(BinaryExpression node, string opr)
         {
-            return VisitExpression(node.Left) + " " + opr + " " + VisitExpression(node.Right);
+            return VisitExpression(node.Left) + " " + opr + " " + VisitExpression(node.Right, true);
         }
 
         private static string VisitConstant(ConstantExpression node)
@@ -73,24 +74,29 @@ namespace SalesforceMagic.LinqProvider
             return VisitExpression(node.Body);
         }
 
-        private static string VisitMember(MemberExpression node)
+        private static string VisitMember(MemberExpression node, bool valueExpression = false)
         {
-            try
-            {
-                return ((PropertyInfo)node.Member).GetName();
-            }
-            catch (Exception e)
-            {
-                ConstantExpression captureConst = (ConstantExpression)node.Expression;
-                object value = ((FieldInfo)node.Member).GetValue(captureConst.Value);
+            if (node.Member is PropertyInfo && !valueExpression) return ((PropertyInfo)node.Member).GetName();
+            if (node.Expression == null) throw new NullReferenceException();
 
-                if (value is string)
-                    return "'" + value + "'";
-                if (value == null)
-                    return "null";
-
-                throw new InvalidDataContractException();
+            object value;
+            ConstantExpression captureConst;
+            
+            if (node.Expression is ConstantExpression)
+            {
+                captureConst = (ConstantExpression)node.Expression;
+                value = ((FieldInfo)node.Member).GetValue(captureConst.Value);
             }
+            else
+            {
+                MemberExpression memberConst = (MemberExpression)node.Expression;
+                captureConst = (ConstantExpression)memberConst.Expression;
+                value = ((PropertyInfo)node.Member).GetValue(((FieldInfo)memberConst.Member).GetValue(captureConst.Value));
+            }
+
+            if (value is string) return "'" + value + "'";
+            if (value == null)  return "null";
+            throw new InvalidDataException();
         }
 
         #region Non-Implemented Methods
