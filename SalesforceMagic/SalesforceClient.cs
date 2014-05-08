@@ -22,7 +22,7 @@ namespace SalesforceMagic
 {
     // TODO: Configure for multiple environments
     // TODO: Add ability to set or pass in session id
-    // TODO: Map responses in a more meaningfull manner
+    // TODO: Map responses in a more meaningful manner
     public class SalesforceClient : ISalesforceClient
     {
         #region Private Fields
