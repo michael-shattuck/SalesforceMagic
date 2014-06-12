@@ -21,7 +21,7 @@ namespace SalesforceMagic.Entities
 
         public void WriteXml(XmlWriter writer)
         {
-            // TODO: Implement robust serialization
+            // TODO: Implement more robust serialization
             Type type = GetType();
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
             writer.WriteElementString("type", type.GetName());
@@ -29,7 +29,12 @@ namespace SalesforceMagic.Entities
             foreach (PropertyInfo info in type.GetProperties())
             {
                 var value = accessor[this, info.Name];
-                if (value != null) writer.WriteElementString(info.GetName(), SalesforceNamespaces.SObject, value.ToString());
+                if (value == null) continue;
+
+                string xmlValue = value is DateTime 
+                    ? ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ")
+                    : value.ToString();
+                writer.WriteElementString(info.GetName(), SalesforceNamespaces.SObject, xmlValue);
             }
         }
     }

@@ -20,11 +20,15 @@ using SalesforceMagic.SoapApi.Enum;
 
 namespace SalesforceMagic
 {
+    // TODO: Configure for multiple environments
+    // TODO: Add ability to set or pass in session id
+    // TODO: Map responses in a more meaningful manner
     public class SalesforceClient : ISalesforceClient
     {
         #region Private Fields
         private readonly ISessionStoreProvider _sessionStore;
         private SalesforceConfig _config;
+        private static readonly object Lock = new object();
         #endregion
 
         public SalesforceClient(ISessionStoreProvider sessionStore, SalesforceConfig config, bool login = false)
@@ -54,28 +58,34 @@ namespace SalesforceMagic
 
         public SalesforceSession Login()
         {
-            SalesforceSession session;
-            if (_config.UseSessionStore)
+            lock (Lock)
             {
-                 session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
-                if (session != null) return session;
-            }
-
-            using (HttpClient httpClient = new HttpClient())
-            {
-                XmlDocument response = httpClient.PerformRequest(SoapRequestManager.GetLoginRequest(_config));
-                SimpleLogin result = ResponseReader.ReadGenericResponse<SimpleLogin>(response);
-
-                Uri instanceUrl = new Uri(result.ServerUrl);
-                session = new SalesforceSession
+                SalesforceSession session;
+                if (_config.UseSessionStore)
                 {
-                    InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
-                    SessionId = result.SessionId
-                };
+                    session = _sessionStore.RetrieveSession(_config.Environment ?? "Default");
+                    if (session != null) return session;
+                }
+            
+                if (_config.Session != null) return _config.Session;
 
-                if (_config.UseSessionStore)  _sessionStore.StoreSession(session);
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    XmlDocument response = httpClient.PerformRequest(SoapRequestManager.GetLoginRequest(_config));
+                    SimpleLogin result = ResponseReader.ReadGenericResponse<SimpleLogin>(response);
 
-                return session;
+                    Uri instanceUrl = new Uri(result.ServerUrl);
+                    session = new SalesforceSession
+                    {
+                        InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
+                        SessionId = result.SessionId
+                    };
+
+                    if (_config.UseSessionStore) _sessionStore.StoreSession(session);
+                    _config.Session = session;
+
+                    return session;
+                }
             }
         }
 
@@ -220,6 +230,7 @@ namespace SalesforceMagic
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool safe)

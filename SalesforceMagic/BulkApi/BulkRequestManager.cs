@@ -8,7 +8,7 @@ namespace SalesforceMagic.BulkApi
 {
     internal static class BulkRequestManager
     {
-        internal static string BulkApiUrl = "/services/async/24.0/job";
+        internal static string BulkApiUrl = "/services/async/24.0/job"; // TODO: Make version # dynamic or configurable
 
         public static HttpRequest GetStartJobRequest<T>(JobConfig config, SalesforceSession session)
         {
@@ -16,7 +16,8 @@ namespace SalesforceMagic.BulkApi
             {
                 Url = session.InstanceUrl + BulkApiUrl,
                 Body = BulkCommands.CreateJob(config, typeof(T).Name),
-                Method = RequestType.POST
+                Method = RequestType.POST,
+                ContentType = "application/xml"
             };
             request.Headers.Add("X-SFDC-Session", session.SessionId);
 
@@ -29,7 +30,8 @@ namespace SalesforceMagic.BulkApi
             {
                 Url = session.InstanceUrl + BulkApiUrl + "/" + jobId,
                 Body = BulkCommands.CloseJob(),
-                Method = RequestType.POST
+                Method = RequestType.POST,
+                ContentType = "application/xml"
             };
             request.Headers.Add("X-SFDC-Session", session.SessionId);
 

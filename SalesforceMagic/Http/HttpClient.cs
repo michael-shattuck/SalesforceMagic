@@ -24,19 +24,35 @@ namespace SalesforceMagic.Http
         /// <returns></returns>
         internal XmlDocument PerformRequest(HttpRequest request)
         {
-            WebRequest webRequest = GenerateWebRequest(request);
-
-            using (WebResponse response = webRequest.GetResponse())
-            using (Stream responseStream = response.GetResponseStream())
+            try
             {
-                if (responseStream == null) throw new SalesforceRequestException("The request to {0} returned no response.", request.Url);
+                WebRequest webRequest = GenerateWebRequest(request);
 
-                XmlDocument xml = new XmlDocument();
+                using (WebResponse response = webRequest.GetResponse())
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    if (responseStream == null) throw new SalesforceRequestException("The request to {0} returned no response.", request.Url);
+
+                    XmlDocument xml = new XmlDocument();
+                    using (StreamReader reader = new StreamReader(responseStream))
+                    {
+                        xml.LoadXml(reader.ReadToEnd());
+
+                        return xml;
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                using (Stream responseStream = e.Response.GetResponseStream())
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
+                    // TODO: This is retarded
+                    XmlDocument xml = new XmlDocument();
                     xml.LoadXml(reader.ReadToEnd());
+                    XmlNode response = xml.GetElementsByTagName("faultstring")[0];
 
-                    return xml;
+                    throw new SalesforceRequestException(response.FirstChild.Value);
                 }
             }
         }
