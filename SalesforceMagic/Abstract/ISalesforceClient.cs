@@ -14,6 +14,7 @@ namespace SalesforceMagic.Abstract
 
         void ChangeEnvironment(SalesforceConfig config, bool login = false);
         string GetSessionId();
+        SalesforceSession GetSession();
         SalesforceSession Login();
 
         #endregion

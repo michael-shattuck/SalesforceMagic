@@ -20,5 +20,8 @@ namespace SalesforceMagic.BulkApi.RequestTemplates
 
         [XmlElement("concurrencyMode")]
         public string ConcurrencyMode { get; set; }
+
+        [XmlElement("externalIdFieldName")]
+        public string ExternalIdFieldName { get; set; }
     }
 }

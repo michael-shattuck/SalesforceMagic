@@ -56,6 +56,11 @@ namespace SalesforceMagic
             return Login().SessionId;
         }
 
+        public virtual SalesforceSession GetSession()
+        {
+            return Login();
+        }
+
         public SalesforceSession Login()
         {
             lock (Lock)

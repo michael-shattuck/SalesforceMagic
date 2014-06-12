@@ -2,6 +2,7 @@
 using System.IO;
 using LINQtoCSV;
 using SalesforceMagic.BulkApi.Configuration;
+using SalesforceMagic.BulkApi.Enum;
 using SalesforceMagic.BulkApi.RequestTemplates;
 using SalesforceMagic.Http;
 using SalesforceMagic.ORM.BaseRequestTemplates;
@@ -24,7 +25,8 @@ namespace SalesforceMagic.BulkApi
                     ContentType = "CSV",
                     Object = objectName,
                     Operation = config.Operation.ToString().ToLower(),
-                    ConcurrencyMode = config.ConcurrencyMode.ToString().ToLower()
+                    ConcurrencyMode = config.ConcurrencyMode.ToString().ToLower(),
+                    ExternalIdFieldName = config.Operation == BulkOperations.Upsert ? config.ExternalIdFieldName : null
                 }
             });
         }

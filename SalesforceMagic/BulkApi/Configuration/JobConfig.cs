@@ -6,5 +6,6 @@ namespace SalesforceMagic.BulkApi.Configuration
     {
         public ConcurrencyMode ConcurrencyMode { get; set; }
         public BulkOperations Operation { get; set; }
+        public string ExternalIdFieldName { get; set; }
     }
 }
