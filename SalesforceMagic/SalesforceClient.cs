@@ -77,7 +77,7 @@ namespace SalesforceMagic
                 using (HttpClient httpClient = new HttpClient())
                 {
                     XmlDocument response = httpClient.PerformRequest(SoapRequestManager.GetLoginRequest(_config));
-                    SimpleLogin result = ResponseReader.ReadGenericResponse<SimpleLogin>(response);
+                    SimpleLogin result = ResponseReader.ReadGenericResponse<SimpleLogin>(response, "result");
 
                     Uri instanceUrl = new Uri(result.ServerUrl);
                     session = new SalesforceSession
@@ -187,27 +187,27 @@ namespace SalesforceMagic
 
         public virtual JobInfo CreateBulkJob<T>(JobConfig config)
         {
-            return PerformGenericRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()));
+            return PerformGenericRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()), "jobInfo");
         }
 
-        public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId)
+        public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId) where T : SObject
         {
-            return PerformGenericRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()));
+            return PerformGenericRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()), "batchInfo");
         }
 
         public virtual SalesforceResponse CloseBulkJob(string jobId)
         {
-            return PerformGenericRequest<SalesforceResponse>(BulkRequestManager.GetCloseJobRequest(jobId, Login()));
+            return PerformGenericRequest<SalesforceResponse>(BulkRequestManager.GetCloseJobRequest(jobId, Login()), "jobInfo");
         }
 
         #region Private Methods
 
-        private T PerformGenericRequest<T>(HttpRequest request)
+        private T PerformGenericRequest<T>(HttpRequest request, string rootName = "result")
         {
             using (HttpClient httpClient = new HttpClient())
             {
                 XmlDocument response = httpClient.PerformRequest(request);
-                return ResponseReader.ReadGenericResponse<T>(response);
+                return ResponseReader.ReadGenericResponse<T>(response, rootName);
             }
         }
 

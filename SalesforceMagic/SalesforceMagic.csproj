@@ -42,11 +42,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +56,6 @@
     <Compile Include="BulkApi\Enum\JobState.cs" />
     <Compile Include="BulkApi\Models\BatchInfo.cs" />
     <Compile Include="BulkApi\Models\JobInfo.cs" />
-    <Compile Include="BulkApi\RequestTemplates\XmlBody.cs" />
     <Compile Include="Configuration\Abstract\ISessionStoreProvider.cs" />
     <Compile Include="Configuration\CrudOperation.cs" />
     <Compile Include="Configuration\MemoryCacheProvider.cs" />

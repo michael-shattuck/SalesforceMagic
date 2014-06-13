@@ -1,6 +1,8 @@
 ﻿using System;
 using SalesforceMagic.BulkApi.Configuration;
 using SalesforceMagic.Configuration;
+using SalesforceMagic.Entities;
+using SalesforceMagic.Extensions;
 using SalesforceMagic.Http.Enums;
 using SalesforceMagic.Http.Models;
 
@@ -15,7 +17,7 @@ namespace SalesforceMagic.BulkApi
             HttpRequest request = new HttpRequest
             {
                 Url = session.InstanceUrl + BulkApiUrl,
-                Body = BulkCommands.CreateJob(config, typeof(T).Name),
+                Body = BulkCommands.CreateJob(config, typeof(T).GetName()),
                 Method = RequestType.POST,
                 ContentType = "application/xml"
             };
@@ -38,7 +40,7 @@ namespace SalesforceMagic.BulkApi
             return request;
         }
 
-        public static HttpRequest GetBatchRequest<T>(T[] items, string jobId, SalesforceSession session)
+        public static HttpRequest GetBatchRequest<T>(T[] items, string jobId, SalesforceSession session) where T : SObject
         {
             HttpRequest request = new HttpRequest
             {

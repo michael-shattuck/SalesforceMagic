@@ -31,6 +31,14 @@ namespace SalesforceMagic.Extensions
                 : info.Name;
         }
 
+        internal static string GetCsvHeaders<T>(this IEnumerable<T> items)
+        {
+            Type type = typeof(T);
+            string[] values = type.GetProperties().Select(x => x.GetName()).ToArray();
+
+            return String.Join(",", values);
+        }
+
         internal static string GetName(this Type type)
         {
             return type.GetCustomAttribute<SalesforceNameAttribute>().Name;

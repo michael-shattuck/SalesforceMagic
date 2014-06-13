@@ -40,9 +40,9 @@ namespace SalesforceMagic.ORM
             return response;
         }
 
-        internal static T ReadGenericResponse<T>(XmlDocument document)
+        internal static T ReadGenericResponse<T>(XmlDocument document, string rootName)
         {
-            return ReadSimpleResponse<T>(GetNamedNodes(document, "result")[0], document);
+            return ReadSimpleResponse<T>(GetNamedNodes(document, rootName)[0], document);
         }
 
         internal static T ReadSimpleResponse<T>(XmlNode node, XmlDocument document)
