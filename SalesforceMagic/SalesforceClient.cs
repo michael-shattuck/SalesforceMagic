@@ -192,6 +192,25 @@ namespace SalesforceMagic
 
         public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId) where T : SObject
         {
+            const int limit = 10000;
+            int count = items.Count();
+
+            if (count > limit)
+            {
+                BatchInfo response = new BatchInfo();
+                int batchCount = (int) Math.Ceiling((decimal)count/limit);
+                for (int i = 0; i < batchCount; i++)
+                {
+                    int offset = i*limit;
+                    BatchInfo info =
+                        PerformGenericRequest<BatchInfo>(
+                            BulkRequestManager.GetBatchRequest(items.Skip(offset).Take(limit).ToArray(), jobId, Login()), "batchInfo");
+
+                    response.NumberRecordsProcessed += info.NumberRecordsProcessed;
+                    response.JobId = info.JobId;
+                }
+            }
+
             return PerformGenericRequest<BatchInfo>(BulkRequestManager.GetBatchRequest(items.ToArray(), jobId, Login()), "batchInfo");
         }
 

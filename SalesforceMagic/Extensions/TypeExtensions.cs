@@ -41,7 +41,10 @@ namespace SalesforceMagic.Extensions
 
         internal static string GetName(this Type type)
         {
-            return type.GetCustomAttribute<SalesforceNameAttribute>().Name;
+            SalesforceNameAttribute attribute = type.GetCustomAttribute<SalesforceNameAttribute>();
+            return attribute != null
+                ? attribute.Name
+                : type.Name;
         }
 
         internal static string GetValue(this XmlNode node, string name)

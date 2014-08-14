@@ -44,7 +44,7 @@ namespace SalesforceMagic.LinqProvider
                     // TODO: I don't like this
                     if (expression.Type == typeof(bool))
                     {
-                        return ((MemberExpression)expression).Member.Name + " = True";
+                        return ((PropertyInfo)((MemberExpression)expression).Member).GetName() + " = True";
                     }
                     return VisitMember(expression as MemberExpression, valueExpression);
                 case ExpressionType.Constant:
@@ -95,6 +95,7 @@ namespace SalesforceMagic.LinqProvider
             }
 
             if (value is string) return "'" + value + "'";
+            if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
             if (value == null)  return "null";
             throw new InvalidDataException();
         }
