@@ -59,11 +59,11 @@ namespace SalesforceMagic.ORM
                 Type propertyType = property.PropertyType;
                 string name = ns ? "sf:" + property.GetName() : property.GetName();
 
-                if (name.Contains("__r"))
+                if (name.Contains("."))
                 {
-                    string referencedProperty = name.Substring(name.LastIndexOf("__r", StringComparison.Ordinal) + 4);
+                    string referencedProperty = name.Substring(name.LastIndexOf(".", StringComparison.Ordinal) + 1);
                     referencedProperty = ns ? "sf:" + referencedProperty : referencedProperty;
-                    name = name.Substring(0, name.LastIndexOf("__r", StringComparison.Ordinal) + 3);
+                    name = name.Substring(0, name.LastIndexOf(".", StringComparison.Ordinal));
                     XmlNode referencedNode = FindChildNode(name, node);
                     if (referencedNode == null) continue;
 
