@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using FastMember;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Extensions;
+using SalesforceMagic.ORM.BaseRequestTemplates;
 using SalesforceMagic.SoapApi.Responses;
 
 namespace SalesforceMagic.ORM
@@ -54,9 +55,21 @@ namespace SalesforceMagic.ORM
 
             foreach (PropertyInfo property in type.GetProperties())
             {
+                string value;
                 Type propertyType = property.PropertyType;
                 string name = ns ? "sf:" + property.GetName() : property.GetName();
-                string value = node.GetValue(name);
+
+                if (name.Contains("__r"))
+                {
+                    string referencedProperty = name.Substring(name.LastIndexOf("__r", StringComparison.Ordinal) + 4);
+                    referencedProperty = ns ? "sf:" + referencedProperty : referencedProperty;
+                    name = name.Substring(0, name.LastIndexOf("__r", StringComparison.Ordinal) + 3);
+                    XmlNode referencedNode = FindChildNode(name, node);
+                    if (referencedNode == null) continue;
+
+                    value = referencedNode.GetValue(referencedProperty);
+                }
+                else value = node.GetValue(name);
 
                 if (value == null)
                 {
@@ -93,6 +106,11 @@ namespace SalesforceMagic.ORM
         {
             XDocument document = XDocument.Parse(node.OuterXml);
             return document.Descendants().Where(x => x.Name.LocalName == name).ToArray();
+        }
+
+        private static XmlNode FindChildNode(string name, XmlNode node)
+        {
+            return node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == name).ToArray().FirstOrDefault();
         }
     }
 }
