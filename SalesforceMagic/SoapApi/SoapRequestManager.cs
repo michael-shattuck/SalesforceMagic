@@ -32,6 +32,12 @@ namespace SalesforceMagic.SoapApi
             return GetQueryRequest(query, session);
         }
 
+        public static HttpRequest GetQueryAllRequest<T>(int limit, SalesforceSession session) where T : SObject
+        {
+            string query = QueryBuilder.GenerateQuery<T>(limit);
+            return GetQueryRequest(query, session);
+        }
+
         public static HttpRequest GetQueryRequest(string query, SalesforceSession session)
         {
             HttpRequest request = new HttpRequest
@@ -41,6 +47,19 @@ namespace SalesforceMagic.SoapApi
                 Method = RequestType.POST,
             };
             request.Headers.Add("SOAPAction", "query");
+
+            return request;
+        }
+
+        public static HttpRequest GetQueryMoreRequest(string queryLocator, SalesforceSession session)
+        {
+            HttpRequest request = new HttpRequest
+            {
+                Url = session.InstanceUrl + SoapUrl,
+                Body = SoapCommands.QueryMore(queryLocator, session.SessionId),
+                Method = RequestType.POST,
+            };
+            request.Headers.Add("SOAPAction", "queryMore");
 
             return request;
         }

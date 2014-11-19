@@ -94,15 +94,105 @@ namespace SalesforceMagic
             }
         }
 
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Generate query using predicate
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public virtual IEnumerable<T> Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
         {
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(predicate, limit, Login()));
         }
 
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> Query<T>(int limit = 0) where T : SObject
+        {
+            return PerformArrayRequest<T>(SoapRequestManager.GetQueryAllRequest<T>(limit, Login()));
+        }
+
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Utilize included raw query
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual IEnumerable<T> Query<T>(string query)
         {
             // TODO: Validate query
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
+        }
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public QueryResult<T> AdvancedQuery<T>(int limit = 0) where T : SObject
+        {
+            return PerformQueryRequest<T>(SoapRequestManager.GetQueryAllRequest<T>(limit, Login()));
+        }
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Generate query using predicate
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public QueryResult<T> AdvancedQuery<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject
+        {
+            return PerformQueryRequest<T>(SoapRequestManager.GetQueryRequest(predicate, limit, Login()));
+        }
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Utilize included raw query
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public QueryResult<T> AdvancedQuery<T>(string query)
+        {
+            return PerformQueryRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
+        }
+
+        /// <summary>
+        ///     Query More
+        ///      - Used to retrieve the next set of records
+        ///        available in a query using the queryLocator.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryLocator"></param>
+        /// <returns></returns>
+        public QueryResult<T> QueryMore<T>(string queryLocator)
+        {
+            return PerformQueryRequest<T>(SoapRequestManager.GetQueryMoreRequest(queryLocator, Login()));
         }
 
         public virtual T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject
@@ -245,6 +335,15 @@ namespace SalesforceMagic
             {
                 XmlDocument response = httpClient.PerformRequest(request);
                 return ResponseReader.ReadArrayResponse<T>(response);
+            }
+        }
+
+        private QueryResult<T> PerformQueryRequest<T>(HttpRequest request)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadQueryResponse<T>(response);
             }
         }
 

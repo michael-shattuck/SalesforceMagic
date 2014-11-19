@@ -63,6 +63,7 @@
     <Compile Include="Configuration\SalesforceSession.cs" />
     <Compile Include="Configuration\SessionStoragePolicy.cs" />
     <Compile Include="Entities\Abstract\ISalesforceObject.cs" />
+    <Compile Include="Entities\QueryResult.cs" />
     <Compile Include="Entities\SObject.cs" />
     <Compile Include="Exceptions\SalesforceRequestException.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="ORM\QueryBuilder.cs" />
     <Compile Include="ORM\ResponseReader.cs" />
     <Compile Include="SoapApi\Enum\CrudOperations.cs" />
+    <Compile Include="SoapApi\RequestTemplates\QueryMoreTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\UpsertTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\DeleteTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\CrudTemplate.cs" />

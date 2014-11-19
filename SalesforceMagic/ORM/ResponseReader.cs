@@ -15,6 +15,18 @@ namespace SalesforceMagic.ORM
 {
     internal static class ResponseReader
     {
+        internal static string ReadStringResponse(string name, XmlDocument document)
+        {
+            XmlNode node = GetSingleNamedNodes(document, name);
+            return node != null ? node.InnerText : null;
+        }
+
+        internal static bool ReadBoolResponse(string name, XmlDocument document)
+        {
+            XmlNode node = GetSingleNamedNodes(document, name);
+            return node != null ? Convert.ToBoolean(node.InnerText) : default(bool);
+        }
+
         internal static SalesforceResponse ReadSimpleResponse(XmlDocument document)
         {
             SalesforceResponse response = new SalesforceResponse();
@@ -96,10 +108,27 @@ namespace SalesforceMagic.ORM
         {
             return (from XmlNode node in GetNamedNodes(document, "records") select ReadSimpleResponse<T>(node, document)).ToArray();
         }
+        
+
+        public static QueryResult<T> ReadQueryResponse<T>(XmlDocument document)
+        {
+            return new QueryResult<T>
+            {
+                QueryLocator = ReadStringResponse("queryLocator", document),
+                Done = ReadBoolResponse("done", document),
+                Records = (from XmlNode node in GetNamedNodes(document, "records") select ReadSimpleResponse<T>(node, document)).ToArray()
+            };
+        }
 
         private static XmlNodeList GetNamedNodes(XmlDocument document, string name)
         {
             return document.GetElementsByTagName(name);
+        }
+
+        private static XmlNode GetSingleNamedNodes(XmlDocument document, string name)
+        {
+            XmlNodeList list = document.GetElementsByTagName(name);
+            return list.Count == 0 ? null : list[0];
         }
 
         private static XElement[] GetNamedNodes(XmlNode node, string name)

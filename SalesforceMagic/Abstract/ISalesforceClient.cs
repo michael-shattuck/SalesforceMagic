@@ -21,8 +21,85 @@ namespace SalesforceMagic.Abstract
 
         #region Query Methods
 
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        IEnumerable<T> Query<T>(int limit = 0) where T : SObject;
+
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Generate query using predicate
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         IEnumerable<T> Query<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject;
+
+        /// <summary>
+        ///     Simple Query
+        ///      - Query items based on generic object
+        ///      - Utilize included raw query
+        ///      - Limited by 200 records
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         IEnumerable<T> Query<T>(string query);
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        QueryResult<T> AdvancedQuery<T>(int limit = 0) where T : SObject;
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Generate query using predicate
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        QueryResult<T> AdvancedQuery<T>(Expression<Func<T, bool>> predicate, int limit = 0) where T : SObject;
+
+        /// <summary>
+        ///     Advanced Query
+        ///      - Query items based on generic object
+        ///      - Utilize included raw query
+        ///      - Returns query locator, and done status which
+        ///        can be used to bypass the 200 record limit.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        QueryResult<T> AdvancedQuery<T>(string query);
+
+        /// <summary>
+        ///     Query More
+        ///      - Used to retrieve the next set of records
+        ///        available in a query using the queryLocator.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryLocator"></param>
+        /// <returns></returns>
+        QueryResult<T> QueryMore<T>(string queryLocator);
+
         T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject;
         T QuerySingle<T>(string query);
 

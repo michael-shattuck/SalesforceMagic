@@ -13,6 +13,9 @@ namespace SalesforceMagic.ORM.BaseRequestTemplates
         [XmlElement("query", Namespace = SalesforceNamespaces.SalesforceRequest)]
         public QueryTemplate QueryTemplate { get; set; }
 
+        [XmlElement("queryMore", Namespace = SalesforceNamespaces.SalesforceRequest)]
+        public QueryMoreTemplate QueryMoreTemplate { get; set; }
+
         [XmlElement("create", Namespace = SalesforceNamespaces.SalesforceRequest)]
         public BasicCrudTemplate InsertTemplate { get; set; }
 

@@ -32,6 +32,21 @@ namespace SalesforceMagic.SoapApi
             });
         }
 
+        public static string QueryMore(string queryLocator, string sessionId)
+        {
+            return XmlRequestGenerator.GenerateRequest(new XmlBody
+            {
+                QueryMoreTemplate = new QueryMoreTemplate(queryLocator)
+            },
+            new XmlHeader
+            {
+                SessionHeader = new SessionHeader
+                {
+                    SessionId = sessionId
+                }
+            });
+        }
+
         public static string CrudOperation<T>(CrudOperation<T> operation, string sessionId) where T : SObject
         {
             XmlBody body = GetCrudBody(operation);

@@ -16,18 +16,14 @@ namespace SalesforceMagic.Entities
     {
         public string Id { get; set; }
 
-        public XmlSchema GetSchema() { return null; }
-
-        internal string ToCsv()
+        public XmlSchema GetSchema()
         {
-            Type type = GetType();
-            TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
-            string[] values = type.GetProperties().Select(x => GetCsvValue(x, accessor)).ToArray();
-
-            return String.Join(",", values);
+            return null;
         }
 
-        public void ReadXml(XmlReader reader) { }
+        public void ReadXml(XmlReader reader)
+        {
+        }
 
         public void WriteXml(XmlWriter writer)
         {
@@ -38,14 +34,35 @@ namespace SalesforceMagic.Entities
 
             foreach (PropertyInfo info in type.GetProperties())
             {
-                var value = accessor[this, info.Name];
+                object value = accessor[this, info.Name];
                 if (value == null) continue;
 
-                string xmlValue = value is DateTime 
+                string xmlValue = value is DateTime
                     ? ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ")
                     : value.ToString();
+
+                //Added additional routine for when value is Byte[] ---bnewbold 22OCT2014
+                if ((value as byte[]) != null)
+                {
+                    //When value is passed in a byte array, as when uploading a filestream file, we need to read the value in rather than cast it to a string.
+                    byte[] byteArray = (byte[])value; //Cast value as byte array into temp variable
+                    writer.WriteStartElement(info.GetName()); //Not using WriteElementsString so need to preface with the XML Tag
+                    writer.WriteBase64(byteArray, 0, byteArray.Length); //Just use base64 XML Writer
+                    writer.WriteEndElement(); //Close the xml tag
+                    continue;
+                }
+
                 writer.WriteElementString(info.GetName(), SalesforceNamespaces.SObject, xmlValue);
             }
+        }
+
+        internal string ToCsv()
+        {
+            Type type = GetType();
+            TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
+            string[] values = type.GetProperties().Select(x => GetCsvValue(x, accessor)).ToArray();
+
+            return String.Join(",", values);
         }
 
         private string GetCsvValue(PropertyInfo info, TypeAccessor accessor)

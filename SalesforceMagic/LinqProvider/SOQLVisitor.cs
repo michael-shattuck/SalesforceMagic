@@ -18,6 +18,14 @@ namespace SalesforceMagic.LinqProvider
         {
             switch (expression.NodeType)
             {
+                case ExpressionType.Add:
+                case ExpressionType.AddChecked:
+                case ExpressionType.Subtract:
+                case ExpressionType.SubtractChecked:
+                case ExpressionType.Multiply:
+                case ExpressionType.MultiplyChecked:
+                    LambdaExpression lambda = Expression.Lambda(expression);
+                    return VisitConstant(lambda.Compile().DynamicInvoke());
                 case ExpressionType.Not:
                     return VisitExpression(Expression.NotEqual(((UnaryExpression)expression).Operand, Expression.Constant(true)));
                 case ExpressionType.IsTrue:
@@ -61,12 +69,17 @@ namespace SalesforceMagic.LinqProvider
 
         private static string VisitConstant(ConstantExpression node)
         {
-            if (node.Value is string)
-                return "'" + node.Value + "'";
-            if (node.Value == null)
-                return "null";
+            return VisitConstant(node.Value);
+        }
 
-            return node.Value.ToString();
+        private static string VisitConstant(object value)
+        {
+            if (value is string)
+                return "'" + value + "'";
+
+            return value == null 
+                ? "null" 
+                : value.ToString();
         }
 
         private static string VisitLambda(LambdaExpression node)
