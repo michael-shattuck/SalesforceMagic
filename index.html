@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -21,7 +21,7 @@
       <div class="inner">
         <h1>SalesforceMagic</h1>
         <h2>Easy access to various Salesforce APIs.</h2>
-        <a href="https://github.com/clamidity/SalesforceMagic" class="button"><small>View project on</small>GitHub</a>
+        <a href="https://github.com/clamidity/SalesforceMagic" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
@@ -29,17 +29,17 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h1>
-<a name="salesforce-magic" class="anchor" href="#salesforce-magic"><span class="octicon octicon-link"></span></a>Salesforce Magic</h1>
+<a id="salesforce-magic" class="anchor" href="#salesforce-magic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Salesforce Magic</h1>
 
 <p>While dealing with Salesforce I realized that there aren't any decent libraries that can communicate using the various APIs. This library is intended to be a simple, solid, and small library that encompasses and provides access to the SOAP, REST and Bulk API's for Salesforce. The magic lies in the library's ability to dynamically generate SOQL queries based on generic types and also the dynamic generation of the SOAP wsdl. You will never have to replace or update a wsdl again.</p>
 
 <h3>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
 <p><a href="https://www.nuget.org/packages/SalesforceMagic">Nuget</a> =&gt; PM&gt; Install-Package SalesforceMagic</p>
 
 <h3>
-<a name="currently-implemented-features" class="anchor" href="#currently-implemented-features"><span class="octicon octicon-link"></span></a>Currently Implemented Features</h3>
+<a id="currently-implemented-features" class="anchor" href="#currently-implemented-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Currently Implemented Features</h3>
 
 <ul>
 <li>Dynamic SOQL query generation based on generic type interpretation</li>
@@ -47,129 +47,120 @@
 <li>SOAP Login and Session ID Retrieval</li>
 <li>SOAP Query based on generic types.</li>
 <li>Re-implementable storage for reusing session details.</li>
-</ul><h3>
-<a name="example-usage" class="anchor" href="#example-usage"><span class="octicon octicon-link"></span></a>Example Usage</h3>
+</ul>
+
+<h3>
+<a id="example-usage" class="anchor" href="#example-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example Usage</h3>
 
 <p>Start by setting up the configuration and Salesforce client:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="kt">var</span> <span class="n">config</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SalesforceConfig</span>
-    <span class="p">{</span>
-        <span class="n">Username</span> <span class="p">=</span> <span class="s">"salesforceUsername"</span><span class="p">,</span>
-        <span class="n">Password</span> <span class="p">=</span> <span class="s">"salesforcePassword"</span><span class="p">,</span>
-        <span class="n">IsSandbox</span> <span class="p">=</span> <span class="k">true</span>
-    <span class="p">}</span>
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-st">void</span> Main()
+{
+    <span class="pl-k">var</span> config = <span class="pl-s">new</span> SalesforceConfig
+    {
+        Username = <span class="pl-s1"><span class="pl-pds">"</span>salesforceUsername<span class="pl-pds">"</span></span>,
+        Password = <span class="pl-s1"><span class="pl-pds">"</span>salesforcePassword<span class="pl-pds">"</span></span>,
+        IsSandbox = <span class="pl-c1">true</span>
+    }
 
-    <span class="k">using</span> <span class="p">(</span><span class="n">SalesforceClient</span> <span class="n">client</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SalesforceClient</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
-    <span class="p">{</span>
-        <span class="c1">// Salesforce logic</span>
-    <span class="p">}</span>     
-<span class="p">}</span>
-</pre></div>
+    <span class="pl-k">using</span> (SalesforceClient client = <span class="pl-s">new</span> SalesforceClient(config))
+    {
+        <span class="pl-c">// Salesforce logic</span>
+    }     
+}</pre></div>
 
 <p>Let's grab the session id:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="kt">string</span> <span class="n">sessionId</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">GetSessionId</span><span class="p">();</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre><span class="pl-st">string</span> sessionId = client.GetSessionId();</pre></div>
 
 <p>We can use the session id if we want, but the method automatically uses the last session id retrieved as long as it is not stale. For example, let's grab 5 vAttachments. We'll start by creating a C# class to represent out vAttachment. SalesforceMagic provides custom attributes that allow you to have pretty and simple classes while mapping to custom field names in Salesforce:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="na">[SalesforceName("vAttachment__c")]</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">vAttachment</span> <span class="p">:</span> <span class="n">SObject</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight highlight-csharp"><pre>[SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>vAttachment__c<span class="pl-pds">"</span></span>)]
+<span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">vAttachment</span> : <span class="pl-st">SObject</span>
+{
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
 
-<span class="na">    [SalesforceName("Filename__c")]</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">FileName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    [SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>Filename__c<span class="pl-pds">"</span></span>)]
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">FileName</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
 
-<span class="na">    [SalesforceName("s3Id__c")]</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">S3Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+    [SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>s3Id__c<span class="pl-pds">"</span></span>)]
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">S3Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+}</pre></div>
 
 <p>Now let's actually perform the query, we'll grab 5 vAttachments and set a condition to ensure that the records we retrieve have the S3Id field set:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">attachments</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">Query</span><span class="p">&lt;</span><span class="n">vAttachment</span><span class="p">&gt;(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">S3Id</span> <span class="p">!=</span> <span class="k">null</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="m">5</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> attachments = client.Query&lt;vAttachment&gt;(x =&gt; x.S3Id != <span class="pl-c1">null</span>, limit: <span class="pl-c1">5</span>);</pre></div>
 
 <p>Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
 First let's create a list of objects we can use.</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">vAttachment</span><span class="p">[]</span> <span class="n">attachments</span> <span class="p">=</span> <span class="k">new</span> <span class="p">[]</span>
-<span class="p">{</span>
-    <span class="k">new</span> <span class="n">vAttachment</span>
-    <span class="p">{</span>
-        <span class="n">FileName</span> <span class="p">=</span> <span class="s">"Test.pdf"</span><span class="p">,</span>
-        <span class="n">S3Id</span> <span class="p">=</span> <span class="s">"123456789"</span>
-    <span class="p">},</span>
-    <span class="k">new</span> <span class="n">vAttachment</span>
-    <span class="p">{</span>
-        <span class="n">FileName</span> <span class="p">=</span> <span class="s">"Test-2.pdf"</span><span class="p">,</span>
-        <span class="n">S3Id</span> <span class="p">=</span> <span class="s">"abcdefghij"</span>
-    <span class="p">},</span>
-    <span class="p">...</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre>vAttachment[] attachments = <span class="pl-s">new</span> []
+{
+    <span class="pl-s">new</span> vAttachment
+    {
+        FileName = <span class="pl-s1"><span class="pl-pds">"</span>Test.pdf<span class="pl-pds">"</span></span>,
+        S3Id = <span class="pl-s1"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>
+    },
+    <span class="pl-s">new</span> vAttachment
+    {
+        FileName = <span class="pl-s1"><span class="pl-pds">"</span>Test-2.pdf<span class="pl-pds">"</span></span>,
+        S3Id = <span class="pl-s1"><span class="pl-pds">"</span>abcdefghij<span class="pl-pds">"</span></span>
+    },
+    ...
+}</pre></div>
 
 <p>SOAP API: Using the SOAP api for CRUD operations is very simple. It can easily deal with individual sObjects or an array.</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">SalesforceResponse</span> <span class="n">response</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">PerformCrudOperation</span><span class="p">(</span><span class="n">attachments</span><span class="p">,</span> <span class="n">CrudOperations</span><span class="p">.</span><span class="n">Insert</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre>SalesforceResponse response = client.PerformCrudOperation(attachments, CrudOperations.Insert);</pre></div>
 
 <p>BULK API: Interaction with the bulk api is slightly different. In order to use the bulk api you'll need to start a data load job:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">JobInfo</span> <span class="n">jobInfo</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">CreateBulkJob</span><span class="p">&lt;</span><span class="n">vAttachment</span><span class="p">&gt;(</span><span class="k">new</span> <span class="n">JobConfig</span>
-<span class="p">{</span>
-    <span class="n">ConcurrencyMode</span> <span class="p">=</span> <span class="n">ConcurrencyMode</span><span class="p">.</span><span class="n">Parallel</span><span class="p">,</span>
-    <span class="n">Operation</span> <span class="p">=</span> <span class="n">BulkOperations</span><span class="p">.</span><span class="n">Insert</span>
-<span class="p">});</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre>JobInfo jobInfo = client.CreateBulkJob&lt;vAttachment&gt;(<span class="pl-s">new</span> JobConfig
+{
+    ConcurrencyMode = ConcurrencyMode.Parallel,
+    Operation = BulkOperations.Insert
+});</pre></div>
 
 <p>Starting a job will return a JobInfo object:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">JobInfo</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Operation</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Object</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">CreatedById</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">CreatedDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="n">JobState</span> <span class="n">State</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="n">ConcurrencyMode</span> <span class="n">ConcurrencyMode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">ContentType</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedQueued</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedInProgress</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedCompleted</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedFailed</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedTotal</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberBatchedProcessed</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberRetries</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">ApiVersion</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">JobInfo</span>
+{
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Operation</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Object</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">CreatedById</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> DateTime <span class="pl-en">CreatedDate</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> JobState <span class="pl-en">State</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> ConcurrencyMode <span class="pl-en">ConcurrencyMode</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">ContentType</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedQueued</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedInProgress</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedCompleted</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedFailed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedTotal</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedProcessed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberRetries</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">ApiVersion</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+}</pre></div>
 
 <p>The most important part of the object is the Id. This is used to add batches to the job:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">BatchInfo</span> <span class="n">batchInfo</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">AddBatch</span><span class="p">(</span><span class="n">attachments</span><span class="p">,</span> <span class="n">jobInfo</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre>BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);</pre></div>
 
 <p>This will queue a batch operation in the specified job. It returns a BatchInfo object:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">BatchInfo</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">JobId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">State</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">CreatedDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">public</span> <span class="kt">int</span> <span class="n">NumberRecordsProcessed</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">BatchInfo</span>
+{
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">JobId</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">State</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> DateTime <span class="pl-en">CreatedDate</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberRecordsProcessed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
+}</pre></div>
 
 <p>Once you have added the necessary batches to the job you will need to close it:</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">SalesforceResponse</span> <span class="n">jobCloseResponse</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="n">CloseBulkJob</span><span class="p">(</span><span class="n">jobInfo</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-csharp"><pre>SalesforceResponse jobCloseResponse = client.CloseBulkJob(jobInfo.Id);</pre></div>
 
 <p>That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!</p>
         </section>
@@ -191,6 +182,16 @@ First let's create a list of objects we can use.</p>
       </div>
     </div>
 
-  
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-56910206-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
