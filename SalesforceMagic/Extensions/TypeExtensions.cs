@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using SalesforceMagic.Attributes;
+using SalesforceMagic.Exceptions;
 
 namespace SalesforceMagic.Extensions
 {
@@ -51,6 +52,134 @@ namespace SalesforceMagic.Extensions
         {
             var result = node[name];
             return result != null ? result.InnerText : null;
+        }
+
+        internal static bool ToBoolean(this string value)
+        {
+            try
+            {
+                return Convert.ToBoolean(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static int ToInt(this string value)
+        {
+            try
+            {
+                return value.Contains(".")
+                    ? (int) Convert.ToDecimal(value)
+                    : Convert.ToInt32(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static double ToDouble(this string value)
+        {
+            try
+            {
+                return Convert.ToDouble(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static decimal ToDecimal(this string value)
+        {
+            try
+            {
+                return Convert.ToDecimal(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static float ToFloat(this string value)
+        {
+            try
+            {
+                return value.Contains(".")
+                    ? (int)Convert.ToDecimal(value)
+                    : Convert.ToInt32(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static DateTime ToDateTime(this string value)
+        {
+            try
+            {
+                return string.IsNullOrEmpty(value)
+                    ? DateTime.MinValue
+                    : Convert.ToDateTime(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+
+
+        internal static bool? ToNullableBoolean(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return Convert.ToBoolean(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static int? ToNullableInt(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return value.Contains(".")
+                    ? (int)Convert.ToDecimal(value)
+                    : Convert.ToInt32(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static double? ToNullableDouble(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return Convert.ToDouble(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static decimal? ToNullableDecimal(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return Convert.ToDecimal(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static float? ToNullableFloat(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return value.Contains(".")
+                    ? (int)Convert.ToDecimal(value)
+                    : Convert.ToInt32(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static DateTime? ToNullableDateTime(this string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            try
+            {
+                return string.IsNullOrEmpty(value)
+                    ? DateTime.MinValue
+                    : Convert.ToDateTime(value);
+            }
+            catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
         }
     }
 }

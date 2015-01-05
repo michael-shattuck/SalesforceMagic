@@ -98,12 +98,22 @@ namespace SalesforceMagic.ORM
                     value = child.Value;
                 };
 
+                // Constant
                 if (propertyType == typeof(string)) accessor[obj, property.Name] = value;
-                if (propertyType == typeof(bool)) accessor[obj, property.Name] = Convert.ToBoolean(value);
-                if (propertyType == typeof(int)) accessor[obj, property.Name] = Convert.ToInt32(value);
-                if (propertyType == typeof(double)) accessor[obj, property.Name] = Convert.ToDouble(value);
-                if (propertyType == typeof(decimal)) accessor[obj, property.Name] = Convert.ToDecimal(value);
-                if (propertyType == typeof(DateTime)) accessor[obj, property.Name] = Convert.ToDateTime(value);
+                if (propertyType == typeof(bool)) accessor[obj, property.Name] = value.ToBoolean();
+                if (propertyType == typeof(int)) accessor[obj, property.Name] = value.ToInt();
+                if (propertyType == typeof(double)) accessor[obj, property.Name] = value.ToDouble();
+                if (propertyType == typeof(decimal)) accessor[obj, property.Name] = value.ToDecimal();
+                if (propertyType == typeof(float)) accessor[obj, property.Name] = value.ToFloat();
+                if (propertyType == typeof(DateTime)) accessor[obj, property.Name] = value.ToDateTime();
+
+                // Null Constant
+                if (propertyType == typeof(bool?)) accessor[obj, property.Name] = value.ToNullableBoolean();
+                if (propertyType == typeof(int?)) accessor[obj, property.Name] = value.ToNullableInt();
+                if (propertyType == typeof(double?)) accessor[obj, property.Name] = value.ToNullableDouble();
+                if (propertyType == typeof(decimal?)) accessor[obj, property.Name] = value.ToNullableDecimal();
+                if (propertyType == typeof(float?)) accessor[obj, property.Name] = value.ToNullableFloat();
+                if (propertyType == typeof(DateTime?)) accessor[obj, property.Name] = value.ToNullableDateTime();
             }
 
             return obj;
