@@ -44,10 +44,15 @@ namespace SalesforceMagic.ORM
                         response.Errors.Add(result.Message);
                     }
                 }
+
+                response.Success = response.Results.All(x => x.Success);
+                if (!response.Success) response.Errors.Add("One or more records failed.");
             }
             else
             {
                 response.Result = ReadSimpleResponse<RecordResult>(results[0], document);
+                response.Success = response.Result.Success;
+                if (!response.Success) response.Errors.Add(response.Result.Message);
             }
 
             return response;

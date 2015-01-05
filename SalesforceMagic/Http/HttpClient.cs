@@ -47,14 +47,31 @@ namespace SalesforceMagic.Http
                 using (Stream responseStream = e.Response.GetResponseStream())
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
+                    string rawResponse = reader.ReadToEnd();
+                    if (string.IsNullOrEmpty(rawResponse)) throw new SalesforceRequestException("No response was recieved.");
+
                     // TODO: This is retarded
                     XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(reader.ReadToEnd());
-                    XmlNode response = xml.GetElementsByTagName("faultstring")[0];
+                    xml.LoadXml(rawResponse);
+                    XmlNode response = ParseFailure(rawResponse, xml);
 
-                    throw new SalesforceRequestException(response.FirstChild.Value);
+                    throw new SalesforceRequestException(response != null ? response.FirstChild.Value : rawResponse);
                 }
             }
+        }
+
+        /// <summary>
+        ///     Method for parsing the response error
+        /// </summary>
+        /// <param name="rawResponse"></param>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        private XmlNode ParseFailure(string rawResponse, XmlDocument xml)
+        {
+            if (rawResponse.Contains("faultstring")) return xml.GetElementsByTagName("faultstring")[0];
+            if (rawResponse.Contains("exceptionMessage")) return xml.GetElementsByTagName("exceptionMessage")[0];
+
+            return null;
         }
 
         /// <summary>

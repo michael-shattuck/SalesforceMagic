@@ -109,7 +109,8 @@ namespace SalesforceMagic.LinqProvider
 
             if (value is string) return "'" + value + "'";
             if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
-            if (value == null)  return "null";
+            if (value == null) return "null";
+            if (value is int || value is float || value is decimal) return value.ToString();
             throw new InvalidDataException();
         }
 
