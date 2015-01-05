@@ -57,6 +57,8 @@ namespace SalesforceMagic.LinqProvider
                     return VisitMember(expression as MemberExpression, valueExpression);
                 case ExpressionType.Constant:
                     return VisitConstant(expression as ConstantExpression);
+                case ExpressionType.Convert:
+                    return VisitMember(((UnaryExpression)expression).Operand as MemberExpression);
                 default:
                     return null;
             }
