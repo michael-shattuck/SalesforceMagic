@@ -77,7 +77,7 @@ namespace SalesforceMagic.LinqProvider
         private static string VisitConstant(object value)
         {
             if (value is string)
-                return "'" + value + "'";
+                return "'" + ((string)value).Replace("'", "\'") + "'";
 
             return value == null 
                 ? "null" 
