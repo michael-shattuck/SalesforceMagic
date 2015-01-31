@@ -37,6 +37,7 @@ namespace SalesforceMagic.Http
                     using (StreamReader reader = new StreamReader(responseStream))
                     {
                         xml.LoadXml(reader.ReadToEnd());
+                        response.Close();
 
                         return xml;
                     }
@@ -80,12 +81,15 @@ namespace SalesforceMagic.Http
         /// <param name="request"></param>
         /// <exception cref="SalesforceRequestException"></exception>
         /// <returns></returns>
-        private WebRequest GenerateWebRequest(HttpRequest request)
+        private HttpWebRequest GenerateWebRequest(HttpRequest request)
         {
             if (request.IsValid)
             {
-                WebRequest webRequest = WebRequest.Create(request.Url);
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(request.Url);
                 webRequest.Method = request.Method.ToString();
+                webRequest.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0";
+                webRequest.Timeout = 300000;
+
                 foreach (KeyValuePair<string, string> header in request.Headers)
                 {
                     webRequest.Headers.Add(header.Key, header.Value);
@@ -106,7 +110,7 @@ namespace SalesforceMagic.Http
         /// </summary>
         /// <param name="webRequest"></param>
         /// <param name="request"></param>
-        private void AddRequestBody(ref WebRequest webRequest, HttpRequest request)
+        private void AddRequestBody(ref HttpWebRequest webRequest, HttpRequest request)
         {
             byte[] byteArray = Encoding.UTF8.GetBytes(request.Body);
             webRequest.ContentType = request.ContentType ?? "text/xml; charset=UTF-8";
