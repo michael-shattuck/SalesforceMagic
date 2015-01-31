@@ -11,6 +11,7 @@ using SalesforceMagic.Configuration;
 using SalesforceMagic.Configuration.Abstract;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Exceptions;
+using SalesforceMagic.Extensions;
 using SalesforceMagic.Http;
 using SalesforceMagic.Http.Models;
 using SalesforceMagic.Http.ResponseModels;
@@ -282,20 +283,15 @@ namespace SalesforceMagic
 
         public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId) where T : SObject
         {
-            const int limit = 10000;
+            const int limit = 9990;
             int count = items.Count();
 
             if (count > limit)
             {
                 BatchInfo response = new BatchInfo();
-                int batchCount = (int) Math.Ceiling((decimal)count/limit);
-                for (int i = 0; i < batchCount; i++)
+                foreach (BatchInfo info in items.Chunk(limit).Select(batch => PerformGenericRequest<BatchInfo>(
+                    BulkRequestManager.GetBatchRequest(batch.ToArray(), jobId, Login()), "batchInfo")))
                 {
-                    int offset = i*limit;
-                    BatchInfo info =
-                        PerformGenericRequest<BatchInfo>(
-                            BulkRequestManager.GetBatchRequest(items.Skip(offset).Take(limit).ToArray(), jobId, Login()), "batchInfo");
-
                     response.NumberRecordsProcessed += info.NumberRecordsProcessed;
                     response.JobId = info.JobId;
                 }
