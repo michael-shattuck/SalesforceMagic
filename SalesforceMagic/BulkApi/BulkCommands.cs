@@ -44,7 +44,7 @@ namespace SalesforceMagic.BulkApi
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(objects.GetCsvHeaders());
-            foreach (T item in objects)
+            foreach (T item in objects.Where(item => item != null))
             {
                 builder.AppendLine(item.ToCsv());
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using SalesforceMagic.Attributes;
@@ -180,6 +179,22 @@ namespace SalesforceMagic.Extensions
                     : Convert.ToDateTime(value);
             }
             catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
+        }
+
+        internal static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> sequence, int size)
+        {
+            IList<T> partition = new List<T>(size);
+            foreach (var item in sequence)
+            {
+                partition.Add(item);
+                if (partition.Count == size)
+                {
+                    yield return partition;
+                    partition = new List<T>(size);
+                }
+            }
+
+            if (partition.Count > 0) yield return partition;
         }
     }
 }
