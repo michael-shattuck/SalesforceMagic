@@ -76,7 +76,7 @@ namespace SalesforceMagic.LinqProvider
         private static string VisitConstant(object value)
         {
             if (value is string)
-                return "'" + ((string)value).Replace("'", "\'") + "'";
+                return "'" + ((string)value).Replace("'", "\\'") + "'";
 
             return value == null 
                 ? "null" 
@@ -108,7 +108,7 @@ namespace SalesforceMagic.LinqProvider
                 value = ((PropertyInfo)node.Member).GetValue(((FieldInfo)memberConst.Member).GetValue(captureConst.Value));
             }
 
-            if (value is string) return "'" + ((string)value).Replace("'", "\'") + "'";
+            if (value is string) return "'" + ((string)value).Replace("'", "\\'") + "'";
             if (value is DateTime) return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ");
             if (value == null) return "null";
             if (value is int || value is float || value is decimal) return value.ToString();
