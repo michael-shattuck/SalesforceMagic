@@ -19,6 +19,20 @@ namespace SalesforceMagic.Abstract
 
         #endregion
 
+        #region Count Methods
+
+        /// <summary>
+        ///     Retrieve an object total count.
+        ///      - Allows for filtering count totals 
+        ///        using the conditional lambda.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        int Count<T>(Expression<Func<T, bool>> predicate = null) where T : SObject;
+
+        #endregion
+
         #region Query Methods
 
         /// <summary>

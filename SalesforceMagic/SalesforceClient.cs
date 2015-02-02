@@ -96,6 +96,20 @@ namespace SalesforceMagic
         }
 
         /// <summary>
+        ///     Retrieve an object total count.
+        ///      - Allows for filtering count totals 
+        ///        using the conditional lambda.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public int Count<T>(Expression<Func<T, bool>> predicate = null) where T : SObject
+        {
+            var request = SoapRequestManager.GetCountRequest(Login(), predicate);
+            return PerformCountRequest(request);
+        }
+
+        /// <summary>
         ///     Simple Query
         ///      - Query items based on generic object
         ///      - Generate query using predicate
@@ -317,6 +331,15 @@ namespace SalesforceMagic
             {
                 XmlDocument response = httpClient.PerformRequest(request);
                 return ResponseReader.ReadGenericResponse<T>(response, rootName);
+            }
+        }
+
+        private int PerformCountRequest(HttpRequest request)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadCountResponse("size", response);
             }
         }
 

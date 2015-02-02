@@ -26,19 +26,19 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
-        public static HttpRequest GetQueryRequest<T>(Expression<Func<T, bool>> predicate, int limit, SalesforceSession session) where T : SObject
+        internal static HttpRequest GetQueryRequest<T>(Expression<Func<T, bool>> predicate, int limit, SalesforceSession session) where T : SObject
         {
             string query = QueryBuilder.GenerateQuery(predicate, limit);
             return GetQueryRequest(query, session);
         }
 
-        public static HttpRequest GetQueryAllRequest<T>(int limit, SalesforceSession session) where T : SObject
+        internal static HttpRequest GetQueryAllRequest<T>(int limit, SalesforceSession session) where T : SObject
         {
             string query = QueryBuilder.GenerateQuery<T>(limit);
             return GetQueryRequest(query, session);
         }
 
-        public static HttpRequest GetQueryRequest(string query, SalesforceSession session)
+        internal static HttpRequest GetQueryRequest(string query, SalesforceSession session)
         {
             HttpRequest request = new HttpRequest
             {
@@ -51,7 +51,7 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
-        public static HttpRequest GetQueryMoreRequest(string queryLocator, SalesforceSession session)
+        internal static HttpRequest GetQueryMoreRequest(string queryLocator, SalesforceSession session)
         {
             HttpRequest request = new HttpRequest
             {
@@ -64,7 +64,7 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
-        public static HttpRequest GetCrudRequest<T>(CrudOperation<T> operation, SalesforceSession session) where T : SObject
+        internal static HttpRequest GetCrudRequest<T>(CrudOperation<T> operation, SalesforceSession session) where T : SObject
         {
             string body = SoapCommands.CrudOperation(operation, session.SessionId);
             HttpRequest request = new HttpRequest
@@ -76,6 +76,12 @@ namespace SalesforceMagic.SoapApi
             request.Headers.Add("SOAPAction", operation.OperationType.ToString().ToLower());
 
             return request;
+        }
+
+        internal static HttpRequest GetCountRequest<T>(SalesforceSession session, Expression<Func<T, bool>> predicate = null)
+        {
+            string query = QueryBuilder.GenerateCountyQuery(predicate);
+            return GetQueryRequest(query, session);
         }
     }
 }

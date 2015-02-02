@@ -8,7 +8,7 @@ namespace SalesforceMagic.ORM
 {
     public static class QueryBuilder
     {
-        public static string GenerateQuery<T>(int limit = default(int))
+        internal static string GenerateQuery<T>(int limit = default(int))
             where T : SObject
         {
             Type type = typeof(T);
@@ -18,13 +18,22 @@ namespace SalesforceMagic.ORM
             return query;
         }
 
-        public static string GenerateQuery<T>(Expression<Func<T, bool>> predicate, int limit = default(int))
+        internal static string GenerateQuery<T>(Expression<Func<T, bool>> predicate, int limit = default(int))
             where T : SObject
         {
             Type type = typeof(T);
             string query = CompileSelectStatements(type);
             if (predicate != null) AddConditionsSet(ref query, predicate);
             if (limit != default(int)) AddQueryLimit(ref query, limit);
+
+            return query;
+        }
+
+        internal static string GenerateCountyQuery<T>(Expression<Func<T, bool>> predicate)
+        {
+            Type type = typeof(T);
+            string query = string.Format("SELECT COUNT() FROM {0}", type.GetName());
+            if (predicate != null) AddConditionsSet(ref query, predicate);
 
             return query;
         }

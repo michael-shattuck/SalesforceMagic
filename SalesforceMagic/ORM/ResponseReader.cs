@@ -26,6 +26,12 @@ namespace SalesforceMagic.ORM
             return node != null ? Convert.ToBoolean(node.InnerText) : default(bool);
         }
 
+        internal static int ReadCountResponse(string name, XmlDocument document)
+        {
+            XmlNode node = GetSingleNamedNodes(document, name);
+            return node != null ? Convert.ToInt32(node.InnerText) : default(int);
+        }
+
         internal static SalesforceResponse ReadSimpleResponse(XmlDocument document)
         {
             SalesforceResponse response = new SalesforceResponse();
