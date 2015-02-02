@@ -49,7 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\ISalesforceClient.cs" />
+    <Compile Include="Attributes\SalesforceIgnore.cs" />
     <Compile Include="Attributes\SalesforceNameAttribute.cs" />
+    <Compile Include="Attributes\SalesforceReadonly.cs" />
     <Compile Include="BulkApi\BulkCommands.cs" />
     <Compile Include="BulkApi\BulkRequestManager.cs" />
     <Compile Include="BulkApi\Configuration\JobConfig.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="Entities\Abstract\ISalesforceObject.cs" />
     <Compile Include="Entities\QueryResult.cs" />
     <Compile Include="Entities\SObject.cs" />
+    <Compile Include="Enums\ApiType.cs" />
     <Compile Include="Exceptions\SalesforceRequestException.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Http\Enums\RequestType.cs" />

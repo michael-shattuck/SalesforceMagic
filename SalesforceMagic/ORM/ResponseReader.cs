@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using FastMember;
+using SalesforceMagic.Attributes;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Extensions;
-using SalesforceMagic.ORM.BaseRequestTemplates;
 using SalesforceMagic.SoapApi.Responses;
 
 namespace SalesforceMagic.ORM
@@ -70,7 +69,7 @@ namespace SalesforceMagic.ORM
             T obj = Activator.CreateInstance<T>();
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
 
-            foreach (PropertyInfo property in type.GetProperties())
+            foreach (PropertyInfo property in type.GetProperties().Where(x => x.GetCustomAttribute<SalesforceReadonly>() == null))
             {
                 string value;
                 Type propertyType = property.PropertyType;
@@ -96,7 +95,7 @@ namespace SalesforceMagic.ORM
                     if (child == null) continue;
 
                     value = child.Value;
-                };
+                }
 
                 // Constant
                 if (propertyType == typeof(string)) accessor[obj, property.Name] = value;

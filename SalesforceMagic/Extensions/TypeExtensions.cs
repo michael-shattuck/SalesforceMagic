@@ -10,16 +10,16 @@ namespace SalesforceMagic.Extensions
 {
     internal static class TypeExtensions
     {
-        internal static IEnumerable<string> GetPropertyNames(this Type type)
+        internal static IEnumerable<string> GetPropertyNames(this Type type, bool skipIgnored = false)
         {
-            return type.GetProperties().GetNames();
+            return type.GetProperties().GetNames(skipIgnored);
         }
 
-        internal static IEnumerable<string> GetNames(this PropertyInfo[] infos)
+        internal static IEnumerable<string> GetNames(this PropertyInfo[] infos, bool skipIgnored = false)
         {
             // TODO: There has to be a better way to do this, the Id field needs to be first.
             List<string> names = new List<string> { GetName(infos.FirstOrDefault(x => x.Name == "Id")) };
-            names.AddRange(infos.Where(x => x.Name != "Id").Select(x => x.GetName()));
+            names.AddRange(infos.Where(x => x.Name != "Id" && x.GetCustomAttribute<SalesforceIgnore>() == null).Select(x => x.GetName()));
 
             return names;
         }
