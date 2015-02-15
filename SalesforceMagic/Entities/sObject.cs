@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Security;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -68,7 +69,11 @@ namespace SalesforceMagic.Entities
         private string GetCsvValue(PropertyInfo info, TypeAccessor accessor)
         {
             Type propertyType = info.PropertyType;
-            if (propertyType == typeof(string)) return string.Format("\"{0}\"", accessor[this, info.Name]);
+            if (propertyType == typeof (string))
+            {
+                string value = (string) accessor[this, info.Name];
+                if (!string.IsNullOrEmpty(value)) return string.Format("\"{0}\"", PrepareCsvValue(value));
+            }
 
             return propertyType == typeof(DateTime)
                 ? string.Format("\"{0}\"", GetDate((DateTime)accessor[this, info.Name]))
@@ -78,6 +83,11 @@ namespace SalesforceMagic.Entities
         private string GetDate(DateTime date)
         {
             return date == DateTime.MinValue ? null : date.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+
+        private string PrepareCsvValue(string value)
+        {
+            return SecurityElement.Escape(value);
         }
     }
 }
