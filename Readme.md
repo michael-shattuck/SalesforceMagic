@@ -6,5 +6,15 @@ While dealing with Salesforce I realized that there aren't any decent libraries 
 [Nuget](https://www.nuget.org/packages/SalesforceMagic) => PM> Install-Package SalesforceMagic
 
 ### Documentation
+* [Getting Started](https://github.com/clamidity/SalesforceMagic/wiki/Getting-Started)
+* [Setting up DTOs](https://github.com/clamidity/SalesforceMagic/wiki/Setting-up-DTOs)
+* [Using the SOAP API](https://github.com/clamidity/SalesforceMagic/wiki/Using-the-SOAP-API)
+* [Using the Bulk API](https://github.com/clamidity/SalesforceMagic/wiki/Using-the-Bulk-API)
 
-Please visit the [Wiki](https://github.com/clamidity/SalesforceMagic/wiki/SalesforceMagic-Documentation) for in-depth documentatin.
+
+#### Currently Implemented Features
+* Dynamic SOQL query generation based on generic type interpretation
+* Expression and predicate visitation allowing users to create both simple and complicated where conditions using powerful lambda expressions.
+* SOAP Login and Session ID Retrieval
+* SOAP Query based on generic types.
+* Re-implementable storage for reusing session details.
