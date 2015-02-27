@@ -61,6 +61,24 @@ Now let's actually perform the query, we'll grab 5 vAttachments and set a condit
 var attachments = client.Query<vAttachment>(x => x.S3Id != null, limit: 5);
 ```
 
+SalesforceMagic also makes use of attributes for specifying whether a field should be ignored, or readonly.
+
+##### SalesforceReadonly
+By default all fields are used when querying and pushing data. This, however, isn't always ideal as it is possibly you will query data with the intention of updating only certain fields. the SalesforceReadonly attribute is used to ensure that a field is populated when queried, but not pushed to Salesforce.
+
+```csharp
+[SalesforceReadonly]
+public string ExampleField { get; set; } // This field will populated, but not pushed
+```
+
+##### SalesforceIgnore
+I have also run into situations where I had data that I needed for the internals of an application, but that I didn't care about pulling or pushing from Salesforce. This attribute allows you to completely ignore a particular property.
+
+```csharp
+[SalesforceIgnore]
+public string ExampleField { get; set; } // This field will not be used by SalesforceMagic
+```
+
 Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
 First let's create a list of objects we can use.
 
