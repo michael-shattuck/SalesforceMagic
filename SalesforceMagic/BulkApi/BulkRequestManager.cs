@@ -40,6 +40,20 @@ namespace SalesforceMagic.BulkApi
             return request;
         }
 
+        public static HttpRequest GetQueryJobRequest(string jobId, SalesforceSession session)
+        {
+            HttpRequest request = new HttpRequest
+            {
+                Url = session.InstanceUrl + BulkApiUrl + "/" + jobId,
+                Body = null,
+                Method = RequestType.GET,
+                ContentType = "application/xml"
+            };
+            request.Headers.Add("X-SFDC-Session", session.SessionId);
+
+            return request;
+        }
+
         public static HttpRequest GetBatchRequest<T>(T[] items, string jobId, SalesforceSession session) where T : SObject
         {
             HttpRequest request = new HttpRequest

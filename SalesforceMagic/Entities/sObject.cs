@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using FastMember;
+using SalesforceMagic.Attributes;
 using SalesforceMagic.Entities.Abstract;
 using SalesforceMagic.Extensions;
 using SalesforceMagic.ORM;
@@ -15,7 +16,7 @@ namespace SalesforceMagic.Entities
 {
     public abstract class SObject : ISalesforceObject, IXmlSerializable
     {
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
 
         public XmlSchema GetSchema()
         {
@@ -33,11 +34,9 @@ namespace SalesforceMagic.Entities
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
             writer.WriteElementString("type", type.GetName());
 
-            foreach (PropertyInfo info in type.GetProperties())
+            foreach (PropertyInfo info in type.FilterProperties<SalesforceReadonly, SalesforceIgnore>())
             {
                 object value = accessor[this, info.Name];
-                if (value == null) continue;
-
                 string xmlValue = value is DateTime
                     ? ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ")
                     : value.ToString();
@@ -61,7 +60,7 @@ namespace SalesforceMagic.Entities
         {
             Type type = GetType();
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
-            string[] values = type.GetProperties().Select(x => GetCsvValue(x, accessor)).ToArray();
+            string[] values = type.FilterProperties<SalesforceReadonly, SalesforceIgnore>().Select(x => GetCsvValue(x, accessor)).ToArray();
 
             return String.Join(",", values);
         }
@@ -87,7 +86,7 @@ namespace SalesforceMagic.Entities
 
         private string PrepareCsvValue(string value)
         {
-            return SecurityElement.Escape(value);
+            return value.Replace("\"", "\"\"");
         }
     }
 }

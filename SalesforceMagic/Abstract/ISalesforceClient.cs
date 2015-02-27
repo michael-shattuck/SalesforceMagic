@@ -136,6 +136,7 @@ namespace SalesforceMagic.Abstract
         #region Bulk Data Methods
 
         JobInfo CreateBulkJob<T>(JobConfig config);
+        JobInfo QueryBulkJob(string jobId);
         BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId, int limit = 10000) where T : SObject;
         SalesforceResponse CloseBulkJob(string jobId);
 

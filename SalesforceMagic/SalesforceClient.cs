@@ -295,6 +295,11 @@ namespace SalesforceMagic
             return PerformGenericRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()), "jobInfo");
         }
 
+        public virtual JobInfo QueryBulkJob(string jobId)
+        {
+            return PerformGenericRequest<JobInfo>(BulkRequestManager.GetQueryJobRequest(jobId, Login()), "jobInfo");
+        }
+
         public virtual BatchInfo AddBatch<T>(IEnumerable<T> items, string jobId, int limit = 10000) where T : SObject
         {
             int count = items.Count();
