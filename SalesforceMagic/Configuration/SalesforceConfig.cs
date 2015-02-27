@@ -10,5 +10,7 @@
         public string Environment { get; set; }
         public bool LogoutOnDisposal { get; set; }
         public bool UseSessionStore { get; set; }
+        public string ApiVersion { get; set; }
+        public string InstanceUrl { get; set; }
     }
 }

@@ -114,7 +114,24 @@ namespace SalesforceMagic.Abstract
         /// <returns></returns>
         QueryResult<T> QueryMore<T>(string queryLocator);
 
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using filter criteria
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject;
+
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using a raw string query
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         T QuerySingle<T>(string query);
 
         #endregion

@@ -38,7 +38,7 @@ namespace SalesforceMagic.Entities
             {
                 object value = accessor[this, info.Name];
                 string xmlValue = value is DateTime
-                    ? ((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ssZ")
+                    ? ((DateTime)value).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") // Contributed by: Murillo.Mike - Salesforce requires UTC dates
                     : value.ToString();
 
                 //Added additional routine for when value is Byte[] ---bnewbold 22OCT2014

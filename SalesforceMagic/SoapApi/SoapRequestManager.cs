@@ -10,14 +10,19 @@ namespace SalesforceMagic.SoapApi
 {
     internal class SoapRequestManager
     {
-        internal static string SoapUrl = "/services/Soap/u/24.0"; // TODO: Make version # dynamic or configurable
+        internal static string DefaultApiVersion = "24.0";
+        internal static string SoapUrl = "services/Soap/u";
 
         internal static HttpRequest GetLoginRequest(SalesforceConfig config)
         {
-            string url = config.IsSandbox ? "https://test.salesforce.com" : "https://login.salesforce.com";
+            string domain = !string.IsNullOrEmpty(config.InstanceUrl)
+                ? config.InstanceUrl
+                : config.IsSandbox ? "https://test.salesforce.com" : "https://login.salesforce.com";
+
+            string url = string.Format("{0}/{1}/{2}", domain, SoapUrl, !string.IsNullOrEmpty(config.ApiVersion) ? config.ApiVersion : DefaultApiVersion);
             HttpRequest request = new HttpRequest
             {
-                Url = url + SoapUrl,
+                Url = url,
                 Body = SoapCommands.Login(config.Username, config.Password + config.SecurityToken),
                 Method = RequestType.POST,
             };
