@@ -39,7 +39,17 @@
 <p><a href="https://www.nuget.org/packages/SalesforceMagic">Nuget</a> =&gt; PM&gt; Install-Package SalesforceMagic</p>
 
 <h3>
-<a id="currently-implemented-features" class="anchor" href="#currently-implemented-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Currently Implemented Features</h3>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
+
+<ul>
+<li><a href="https://github.com/clamidity/SalesforceMagic/wiki/Getting-Started">Getting Started</a></li>
+<li><a href="https://github.com/clamidity/SalesforceMagic/wiki/Setting-up-DTOs">Setting up DTOs</a></li>
+<li><a href="https://github.com/clamidity/SalesforceMagic/wiki/Using-the-SOAP-API">Using the SOAP API</a></li>
+<li><a href="https://github.com/clamidity/SalesforceMagic/wiki/Using-the-Bulk-API">Using the Bulk API</a></li>
+</ul>
+
+<h4>
+<a id="currently-implemented-features" class="anchor" href="#currently-implemented-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Currently Implemented Features</h4>
 
 <ul>
 <li>Dynamic SOQL query generation based on generic type interpretation</li>
@@ -48,121 +58,6 @@
 <li>SOAP Query based on generic types.</li>
 <li>Re-implementable storage for reusing session details.</li>
 </ul>
-
-<h3>
-<a id="example-usage" class="anchor" href="#example-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example Usage</h3>
-
-<p>Start by setting up the configuration and Salesforce client:</p>
-
-<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-st">void</span> Main()
-{
-    <span class="pl-k">var</span> config = <span class="pl-s">new</span> SalesforceConfig
-    {
-        Username = <span class="pl-s1"><span class="pl-pds">"</span>salesforceUsername<span class="pl-pds">"</span></span>,
-        Password = <span class="pl-s1"><span class="pl-pds">"</span>salesforcePassword<span class="pl-pds">"</span></span>,
-        IsSandbox = <span class="pl-c1">true</span>
-    }
-
-    <span class="pl-k">using</span> (SalesforceClient client = <span class="pl-s">new</span> SalesforceClient(config))
-    {
-        <span class="pl-c">// Salesforce logic</span>
-    }     
-}</pre></div>
-
-<p>Let's grab the session id:</p>
-
-<div class="highlight highlight-csharp"><pre><span class="pl-st">string</span> sessionId = client.GetSessionId();</pre></div>
-
-<p>We can use the session id if we want, but the method automatically uses the last session id retrieved as long as it is not stale. For example, let's grab 5 vAttachments. We'll start by creating a C# class to represent out vAttachment. SalesforceMagic provides custom attributes that allow you to have pretty and simple classes while mapping to custom field names in Salesforce:</p>
-
-<div class="highlight highlight-csharp"><pre>[SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>vAttachment__c<span class="pl-pds">"</span></span>)]
-<span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">vAttachment</span> : <span class="pl-st">SObject</span>
-{
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-
-    [SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>Filename__c<span class="pl-pds">"</span></span>)]
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">FileName</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-
-    [SalesforceName(<span class="pl-s1"><span class="pl-pds">"</span>s3Id__c<span class="pl-pds">"</span></span>)]
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">S3Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-}</pre></div>
-
-<p>Now let's actually perform the query, we'll grab 5 vAttachments and set a condition to ensure that the records we retrieve have the S3Id field set:</p>
-
-<div class="highlight highlight-csharp"><pre><span class="pl-k">var</span> attachments = client.Query&lt;vAttachment&gt;(x =&gt; x.S3Id != <span class="pl-c1">null</span>, limit: <span class="pl-c1">5</span>);</pre></div>
-
-<p>Let's also go over the use of CRUD operations using both the SOAP and Bulk apis.
-First let's create a list of objects we can use.</p>
-
-<div class="highlight highlight-csharp"><pre>vAttachment[] attachments = <span class="pl-s">new</span> []
-{
-    <span class="pl-s">new</span> vAttachment
-    {
-        FileName = <span class="pl-s1"><span class="pl-pds">"</span>Test.pdf<span class="pl-pds">"</span></span>,
-        S3Id = <span class="pl-s1"><span class="pl-pds">"</span>123456789<span class="pl-pds">"</span></span>
-    },
-    <span class="pl-s">new</span> vAttachment
-    {
-        FileName = <span class="pl-s1"><span class="pl-pds">"</span>Test-2.pdf<span class="pl-pds">"</span></span>,
-        S3Id = <span class="pl-s1"><span class="pl-pds">"</span>abcdefghij<span class="pl-pds">"</span></span>
-    },
-    ...
-}</pre></div>
-
-<p>SOAP API: Using the SOAP api for CRUD operations is very simple. It can easily deal with individual sObjects or an array.</p>
-
-<div class="highlight highlight-csharp"><pre>SalesforceResponse response = client.PerformCrudOperation(attachments, CrudOperations.Insert);</pre></div>
-
-<p>BULK API: Interaction with the bulk api is slightly different. In order to use the bulk api you'll need to start a data load job:</p>
-
-<div class="highlight highlight-csharp"><pre>JobInfo jobInfo = client.CreateBulkJob&lt;vAttachment&gt;(<span class="pl-s">new</span> JobConfig
-{
-    ConcurrencyMode = ConcurrencyMode.Parallel,
-    Operation = BulkOperations.Insert
-});</pre></div>
-
-<p>Starting a job will return a JobInfo object:</p>
-
-<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">JobInfo</span>
-{
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Operation</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Object</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">CreatedById</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> DateTime <span class="pl-en">CreatedDate</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> JobState <span class="pl-en">State</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> ConcurrencyMode <span class="pl-en">ConcurrencyMode</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">ContentType</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedQueued</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedInProgress</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedCompleted</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedFailed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedTotal</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberBatchedProcessed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberRetries</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">ApiVersion</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-}</pre></div>
-
-<p>The most important part of the object is the Id. This is used to add batches to the job:</p>
-
-<div class="highlight highlight-csharp"><pre>BatchInfo batchInfo = client.AddBatch(attachments, jobInfo.Id);</pre></div>
-
-<p>This will queue a batch operation in the specified job. It returns a BatchInfo object:</p>
-
-<div class="highlight highlight-csharp"><pre><span class="pl-s">public</span> <span class="pl-s">class</span> <span class="pl-en">BatchInfo</span>
-{
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">Id</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">JobId</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">string</span> <span class="pl-en">State</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> DateTime <span class="pl-en">CreatedDate</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-    <span class="pl-s">public</span> <span class="pl-st">int</span> <span class="pl-en">NumberRecordsProcessed</span> { <span class="pl-k">get</span>; <span class="pl-k">set</span>; }
-}</pre></div>
-
-<p>Once you have added the necessary batches to the job you will need to close it:</p>
-
-<div class="highlight highlight-csharp"><pre>SalesforceResponse jobCloseResponse = client.CloseBulkJob(jobInfo.Id);</pre></div>
-
-<p>That's it! This will return an IEnumerable of 5 vAttachment objects. You can add more fields, remove fields, add more complex conditions. The sky is the limit!</p>
         </section>
 
         <aside id="sidebar">
