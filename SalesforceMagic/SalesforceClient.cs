@@ -84,7 +84,8 @@ namespace SalesforceMagic
                     session = new SalesforceSession
                     {
                         InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
-                        SessionId = result.SessionId
+                        SessionId = result.SessionId,
+                        ApiVersion = _config.ApiVersion
                     };
 
                     if (_config.UseSessionStore) _sessionStore.StoreSession(session);

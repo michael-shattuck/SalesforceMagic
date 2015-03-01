@@ -10,8 +10,8 @@ namespace SalesforceMagic.SoapApi
 {
     internal class SoapRequestManager
     {
-        internal static string DefaultApiVersion = "24.0";
-        internal static string SoapUrl = "services/Soap/u";
+        internal static string DefaultApiVersion = "30.0";
+        internal static string SoapUrl = "/services/Soap/";
 
         internal static HttpRequest GetLoginRequest(SalesforceConfig config)
         {
@@ -19,10 +19,9 @@ namespace SalesforceMagic.SoapApi
                 ? config.InstanceUrl
                 : config.IsSandbox ? "https://test.salesforce.com" : "https://login.salesforce.com";
 
-            string url = string.Format("{0}/{1}/{2}", domain, SoapUrl, !string.IsNullOrEmpty(config.ApiVersion) ? config.ApiVersion : DefaultApiVersion);
             HttpRequest request = new HttpRequest
             {
-                Url = url,
+                Url = GetSoapUrl(domain, config.ApiVersion),
                 Body = SoapCommands.Login(config.Username, config.Password + config.SecurityToken),
                 Method = RequestType.POST,
             };
@@ -47,7 +46,7 @@ namespace SalesforceMagic.SoapApi
         {
             HttpRequest request = new HttpRequest
             {
-                Url = session.InstanceUrl + SoapUrl,
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = SoapCommands.Query(query, session.SessionId),
                 Method = RequestType.POST,
             };
@@ -60,7 +59,7 @@ namespace SalesforceMagic.SoapApi
         {
             HttpRequest request = new HttpRequest
             {
-                Url = session.InstanceUrl + SoapUrl,
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = SoapCommands.QueryMore(queryLocator, session.SessionId),
                 Method = RequestType.POST,
             };
@@ -74,7 +73,7 @@ namespace SalesforceMagic.SoapApi
             string body = SoapCommands.CrudOperation(operation, session.SessionId);
             HttpRequest request = new HttpRequest
             {
-                Url = session.InstanceUrl + SoapUrl,
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = body,
                 Method = RequestType.POST,
             };
@@ -87,6 +86,13 @@ namespace SalesforceMagic.SoapApi
         {
             string query = QueryBuilder.GenerateCountyQuery(predicate);
             return GetQueryRequest(query, session);
+        }
+
+        private static string GetSoapUrl(string instance, string apiVersion)
+        {
+            return string.Format("{0}{1}/u/{2}", instance, SoapUrl, !string.IsNullOrEmpty(apiVersion) 
+                ? apiVersion 
+                : DefaultApiVersion);
         }
     }
 }
