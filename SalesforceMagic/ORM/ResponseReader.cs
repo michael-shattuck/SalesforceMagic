@@ -104,21 +104,22 @@ namespace SalesforceMagic.ORM
                 }
 
                 // Constant
-                if (propertyType == typeof(string)) accessor[obj, property.Name] = value;
-                if (propertyType == typeof(bool)) accessor[obj, property.Name] = value.ToBoolean();
-                if (propertyType == typeof(int)) accessor[obj, property.Name] = value.ToInt();
-                if (propertyType == typeof(double)) accessor[obj, property.Name] = value.ToDouble();
-                if (propertyType == typeof(decimal)) accessor[obj, property.Name] = value.ToDecimal();
-                if (propertyType == typeof(float)) accessor[obj, property.Name] = value.ToFloat();
-                if (propertyType == typeof(DateTime)) accessor[obj, property.Name] = value.ToDateTime();
+                if (propertyType.IsEnum) accessor[obj, property.Name] = Enum.Parse(propertyType, value);
+                else if (propertyType == typeof(string)) accessor[obj, property.Name] = value;
+                else if (propertyType == typeof(bool)) accessor[obj, property.Name] = value.ToBoolean();
+                else if (propertyType == typeof(int)) accessor[obj, property.Name] = value.ToInt();
+                else if (propertyType == typeof(double)) accessor[obj, property.Name] = value.ToDouble();
+                else if (propertyType == typeof(decimal)) accessor[obj, property.Name] = value.ToDecimal();
+                else if (propertyType == typeof(float)) accessor[obj, property.Name] = value.ToFloat();
+                else if (propertyType == typeof(DateTime)) accessor[obj, property.Name] = value.ToDateTime();
 
                 // Null Constant
-                if (propertyType == typeof(bool?)) accessor[obj, property.Name] = value.ToNullableBoolean();
-                if (propertyType == typeof(int?)) accessor[obj, property.Name] = value.ToNullableInt();
-                if (propertyType == typeof(double?)) accessor[obj, property.Name] = value.ToNullableDouble();
-                if (propertyType == typeof(decimal?)) accessor[obj, property.Name] = value.ToNullableDecimal();
-                if (propertyType == typeof(float?)) accessor[obj, property.Name] = value.ToNullableFloat();
-                if (propertyType == typeof(DateTime?)) accessor[obj, property.Name] = value.ToNullableDateTime();
+                else if (propertyType == typeof(bool?)) accessor[obj, property.Name] = value.ToNullableBoolean();
+                else if (propertyType == typeof(int?)) accessor[obj, property.Name] = value.ToNullableInt();
+                else if (propertyType == typeof(double?)) accessor[obj, property.Name] = value.ToNullableDouble();
+                else if (propertyType == typeof(decimal?)) accessor[obj, property.Name] = value.ToNullableDecimal();
+                else if (propertyType == typeof(float?)) accessor[obj, property.Name] = value.ToNullableFloat();
+                else if (propertyType == typeof(DateTime?)) accessor[obj, property.Name] = value.ToNullableDateTime();
             }
 
             return obj;
