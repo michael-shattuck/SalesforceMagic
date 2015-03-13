@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Xml;
 using SalesforceMagic.Abstract;
 using SalesforceMagic.BulkApi;
@@ -83,9 +84,13 @@ namespace SalesforceMagic
                     Uri instanceUrl = new Uri(result.ServerUrl);
                     session = new SalesforceSession
                     {
+                        Environment = _config.Environment,
+                        ApiVersion = _config.ApiVersion,
+                        IsSandbox = _config.IsSandbox,
+                        LastLogin = DateTime.Now,
                         InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
                         SessionId = result.SessionId,
-                        ApiVersion = _config.ApiVersion
+                        Proxy = _config.Proxy
                     };
 
                     if (_config.UseSessionStore) _sessionStore.StoreSession(session);

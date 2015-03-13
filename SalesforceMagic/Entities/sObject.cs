@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -34,11 +36,23 @@ namespace SalesforceMagic.Entities
             TypeAccessor accessor = ObjectHydrator.GetAccessor(type);
             writer.WriteElementString("type", type.GetName());
 
-            foreach (PropertyInfo info in type.FilterProperties<SalesforceReadonly, SalesforceIgnore>())
+            IList<string> fieldsToNull = new List<string>();
+            foreach (PropertyInfo info in from info in type.FilterProperties<SalesforceReadonly>() 
+                                          let ignoreAttribute = info.GetCustomAttribute<SalesforceIgnore>() 
+                                          where ignoreAttribute == null || !ignoreAttribute.IfEmpty 
+                                          select info)
             {
                 object value = accessor[this, info.Name];
-                string xmlValue = value is DateTime
-                    ? ((DateTime)value).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") // Contributed by: Murillo.Mike - Salesforce requires UTC dates
+                string salesforceName = info.GetName();
+
+                if (value == null)
+                {
+                    fieldsToNull.Add(salesforceName);
+                    continue;
+                }
+
+                var xmlValue = value is DateTime
+                    ? ((DateTime) value).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") // Contributed by: Murillo.Mike - Salesforce requires UTC dates
                     : value.ToString();
 
                 //Added additional routine for when value is Byte[] ---bnewbold 22OCT2014
@@ -52,8 +66,11 @@ namespace SalesforceMagic.Entities
                     continue;
                 }
 
-                writer.WriteElementString(info.GetName(), SalesforceNamespaces.SObject, xmlValue);
+                writer.WriteElementString(salesforceName, SalesforceNamespaces.SObject, xmlValue);
             }
+
+            foreach (string field in fieldsToNull)
+                writer.WriteElementString("fieldsToNull", SalesforceNamespaces.SObject, field);
         }
 
         internal string ToCsv()

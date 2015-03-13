@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace SalesforceMagic.Configuration
 {
@@ -10,5 +11,6 @@ namespace SalesforceMagic.Configuration
         public bool IsSandbox { get; set; }
         public string ApiVersion { get; set; }
         public DateTime LastLogin { get; set; }
+        public WebProxy Proxy { get; set; }
     }
 }

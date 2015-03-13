@@ -1,4 +1,6 @@
-﻿namespace SalesforceMagic.Configuration
+﻿using System.Net;
+
+namespace SalesforceMagic.Configuration
 {
     public class SalesforceConfig
     {
@@ -12,5 +14,6 @@
         public bool UseSessionStore { get; set; }
         public string ApiVersion { get; set; }
         public string InstanceUrl { get; set; }
+        public WebProxy Proxy { get; set; }
     }
 }

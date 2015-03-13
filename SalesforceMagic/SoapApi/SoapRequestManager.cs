@@ -24,6 +24,7 @@ namespace SalesforceMagic.SoapApi
                 Url = GetSoapUrl(domain, config.ApiVersion),
                 Body = SoapCommands.Login(config.Username, config.Password + config.SecurityToken),
                 Method = RequestType.POST,
+                Proxy = config.Proxy
             };
             request.Headers.Add("SOAPAction", "login");
 
@@ -49,6 +50,7 @@ namespace SalesforceMagic.SoapApi
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = SoapCommands.Query(query, session.SessionId),
                 Method = RequestType.POST,
+                Proxy = session.Proxy
             };
             request.Headers.Add("SOAPAction", "query");
 
@@ -62,6 +64,7 @@ namespace SalesforceMagic.SoapApi
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = SoapCommands.QueryMore(queryLocator, session.SessionId),
                 Method = RequestType.POST,
+                Proxy = session.Proxy
             };
             request.Headers.Add("SOAPAction", "queryMore");
 
@@ -76,6 +79,7 @@ namespace SalesforceMagic.SoapApi
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
                 Body = body,
                 Method = RequestType.POST,
+                Proxy = session.Proxy
             };
             request.Headers.Add("SOAPAction", operation.OperationType.ToString().ToLower());
 
