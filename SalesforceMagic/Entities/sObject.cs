@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -13,12 +11,16 @@ using SalesforceMagic.Entities.Abstract;
 using SalesforceMagic.Extensions;
 using SalesforceMagic.ORM;
 using SalesforceMagic.ORM.BaseRequestTemplates;
+using SalesforceMagic.SoapApi.Enum;
 
 namespace SalesforceMagic.Entities
 {
     public abstract class SObject : ISalesforceObject, IXmlSerializable
     {
         public virtual string Id { get; set; }
+
+        [SalesforceIgnore]
+        internal CrudOperations OperationType { get; set; }
 
         public XmlSchema GetSchema()
         {
@@ -69,8 +71,11 @@ namespace SalesforceMagic.Entities
                 writer.WriteElementString(salesforceName, SalesforceNamespaces.SObject, xmlValue);
             }
 
-            foreach (string field in fieldsToNull)
-                writer.WriteElementString("fieldsToNull", SalesforceNamespaces.SObject, field);
+            if (OperationType != CrudOperations.Insert)
+            {
+                foreach (string field in fieldsToNull)
+                    writer.WriteElementString("fieldsToNull", SalesforceNamespaces.SObject, field);
+            }
         }
 
         internal string ToCsv()
@@ -91,14 +96,22 @@ namespace SalesforceMagic.Entities
                 if (!string.IsNullOrEmpty(value)) return string.Format("\"{0}\"", PrepareCsvValue(value));
             }
 
-            return propertyType == typeof(DateTime)
-                ? string.Format("\"{0}\"", GetDate((DateTime)accessor[this, info.Name]))
-                : string.Format("{0}", accessor[this, info.Name]);
+            if (propertyType == typeof (DateTime))
+                return string.Format("\"{0}\"", GetDate((DateTime)accessor[this, info.Name]));
+            if (propertyType == typeof(DateTime?))
+                return string.Format("\"{0}\"", GetNullableDate((DateTime?)accessor[this, info.Name]));
+            
+            return string.Format("{0}", accessor[this, info.Name]);
         }
 
         private string GetDate(DateTime date)
         {
             return date == DateTime.MinValue ? null : date.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        }
+
+        private string GetNullableDate(DateTime? date)
+        {
+            return date == null ? null : ((DateTime)date).ToString("yyyy-MM-ddTHH:mm:ssZ");
         }
 
         private string PrepareCsvValue(string value)
