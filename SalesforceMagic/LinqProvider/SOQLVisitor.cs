@@ -90,6 +90,7 @@ namespace SalesforceMagic.LinqProvider
 
         private static string VisitMember(MemberExpression node, bool valueExpression = false)
         {
+            if (node == null) return "null";
             if (node.Member is PropertyInfo && !valueExpression) return ((PropertyInfo)node.Member).GetName();
             if (node.Expression == null) throw new NullReferenceException();
 
