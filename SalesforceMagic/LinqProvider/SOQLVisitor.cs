@@ -6,9 +6,9 @@ using SalesforceMagic.Extensions;
 
 namespace SalesforceMagic.LinqProvider
 {
-    internal static class SOQLVisitor
+    public static class SOQLVisitor
     {
-        internal static string ConvertToSOQL(Expression expression)
+        public static string ConvertToSOQL(Expression expression)
         {
             return VisitExpression(expression);
         }
