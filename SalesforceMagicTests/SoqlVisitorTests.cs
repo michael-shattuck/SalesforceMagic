@@ -9,10 +9,15 @@ namespace SalesforceMagicTests
     public class SoqlVisitorTests
     {
         [Test]
-        public void ShouldConvertExpressionsToSoql()
+        public void ShouldConvertBinaryExpressionsToSoql()
         {
             TestExpression(a => a.IsDeleted).ShouldBe("IsDeleted = True");
+            TestExpression(a => a.IsDeleted == true).ShouldBe("IsDeleted = True");
+
             TestExpression(a => !a.IsDeleted).ShouldBe("IsDeleted != True");
+            TestExpression(a => a.IsDeleted != true).ShouldBe("IsDeleted != True");
+            TestExpression(a => a.IsDeleted == false).ShouldBe("IsDeleted = False");
+            TestExpression(a => a.IsDeleted != false).ShouldBe("IsDeleted != False");
         }
 
         private string TestExpression(Expression<Func<TestAccount, bool>> expression)

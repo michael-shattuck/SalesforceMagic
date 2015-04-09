@@ -65,7 +65,7 @@ namespace SalesforceMagic.LinqProvider
                 && node.Right.NodeType == ExpressionType.Constant)
             {
                 var right = ((ConstantExpression) node.Right).Value;
-                return ((PropertyInfo)((MemberExpression)node.Left).Member).GetName() + " = " + right;
+                return ((PropertyInfo)((MemberExpression)node.Left).Member).GetName() + " " + opr + " " + right;
             }
             return VisitExpression(node.Left) + " " + opr + " " + VisitExpression(node.Right, true);
         }
