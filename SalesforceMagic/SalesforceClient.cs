@@ -152,7 +152,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual IEnumerable<T> Query<T>(string query)
+        public virtual IEnumerable<T> Query<T>(string query) where T : SObject
         {
             // TODO: Validate query
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
@@ -198,7 +198,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public QueryResult<T> AdvancedQuery<T>(string query)
+        public QueryResult<T> AdvancedQuery<T>(string query) where T : SObject
         {
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
         }
@@ -211,7 +211,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="queryLocator"></param>
         /// <returns></returns>
-        public QueryResult<T> QueryMore<T>(string queryLocator)
+        public QueryResult<T> QueryMore<T>(string queryLocator) where T : SObject
         {
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryMoreRequest(queryLocator, Login()));
         }
@@ -221,7 +221,7 @@ namespace SalesforceMagic
             return Query(predicate).FirstOrDefault();
         }
 
-        public virtual T QuerySingle<T>(string query)
+        public virtual T QuerySingle<T>(string query) where T : SObject
         {
             return Query<T>(query).FirstOrDefault();
         }
@@ -377,7 +377,7 @@ namespace SalesforceMagic
             }
         }
 
-        private IEnumerable<T> PerformArrayRequest<T>(HttpRequest request)
+        private IEnumerable<T> PerformArrayRequest<T>(HttpRequest request) where T : SObject
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -386,7 +386,7 @@ namespace SalesforceMagic
             }
         }
 
-        private IEnumerable<T> PerformRetrieveRequest<T>(HttpRequest request)
+        private IEnumerable<T> PerformRetrieveRequest<T>(HttpRequest request) where T : SObject
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -395,7 +395,7 @@ namespace SalesforceMagic
             }
         }
 
-        private QueryResult<T> PerformQueryRequest<T>(HttpRequest request)
+        private QueryResult<T> PerformQueryRequest<T>(HttpRequest request) where T : SObject
         {
             using (HttpClient httpClient = new HttpClient())
             {

@@ -130,9 +130,9 @@ namespace SalesforceMagic.ORM
             return (from XmlNode node in GetNamedNodes(document, "records") select ReadSimpleResponse<T>(node, document)).ToArray();
         }
 
-        internal static T[] ReadRetriveResponse<T>(XmlDocument document)
+        internal static T[] ReadRetriveResponse<T>(XmlDocument document) where T : SObject
         {
-            return (from XmlNode node in GetNamedNodes(document, "result") select ReadSimpleResponse<T>(node, document)).ToArray();
+            return (from XmlNode node in GetNamedNodes(document, "result") select ReadSimpleResponse<T>(node, document)).Select(r => r.Id == null ? null : r).ToArray();
         }
 
         public static QueryResult<T> ReadQueryResponse<T>(XmlDocument document)

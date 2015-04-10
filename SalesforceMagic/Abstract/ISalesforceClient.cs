@@ -66,7 +66,7 @@ namespace SalesforceMagic.Abstract
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        IEnumerable<T> Query<T>(string query);
+        IEnumerable<T> Query<T>(string query) where T : SObject;
 
         /// <summary>
         ///     Advanced Query
@@ -102,7 +102,7 @@ namespace SalesforceMagic.Abstract
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        QueryResult<T> AdvancedQuery<T>(string query);
+        QueryResult<T> AdvancedQuery<T>(string query) where T : SObject;
 
         /// <summary>
         ///     Query More
@@ -112,7 +112,7 @@ namespace SalesforceMagic.Abstract
         /// <typeparam name="T"></typeparam>
         /// <param name="queryLocator"></param>
         /// <returns></returns>
-        QueryResult<T> QueryMore<T>(string queryLocator);
+        QueryResult<T> QueryMore<T>(string queryLocator) where T : SObject;
 
         /// <summary>
         ///     Query Single
@@ -132,7 +132,7 @@ namespace SalesforceMagic.Abstract
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        T QuerySingle<T>(string query);
+        T QuerySingle<T>(string query) where T : SObject;
 
         #endregion
 
