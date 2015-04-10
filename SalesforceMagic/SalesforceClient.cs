@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Xml;
 using SalesforceMagic.Abstract;
 using SalesforceMagic.BulkApi;
@@ -90,7 +89,8 @@ namespace SalesforceMagic
                         LastLogin = DateTime.Now,
                         InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
                         SessionId = result.SessionId,
-                        Proxy = _config.Proxy
+                        Proxy = _config.Proxy,
+                        BatchSize = _config.BatchSize,
                     };
 
                     if (_config.UseSessionStore) _sessionStore.StoreSession(session);
@@ -224,6 +224,16 @@ namespace SalesforceMagic
         public virtual T QuerySingle<T>(string query)
         {
             return Query<T>(query).FirstOrDefault();
+        }
+
+        public virtual T Retrieve<T>(string id) where T : SObject
+        {
+            return Retrieve<T>(new [] { id }).FirstOrDefault();
+        }
+
+        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
+        {
+            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
         }
 
         public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
@@ -373,6 +383,15 @@ namespace SalesforceMagic
             {
                 XmlDocument response = httpClient.PerformRequest(request);
                 return ResponseReader.ReadArrayResponse<T>(response);
+            }
+        }
+
+        private IEnumerable<T> PerformRetrieveRequest<T>(HttpRequest request)
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadRetriveResponse<T>(response);
             }
         }
 

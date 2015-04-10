@@ -15,5 +15,10 @@ namespace SalesforceMagic.Configuration
         public string ApiVersion { get; set; }
         public string InstanceUrl { get; set; }
         public WebProxy Proxy { get; set; }
+
+        /// <summary>
+        /// Min: 200, Max: 2000, Default: 500.
+        /// </summary>
+        public int? BatchSize { get; set; }
     }
 }

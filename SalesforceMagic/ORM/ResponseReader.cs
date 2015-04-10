@@ -129,7 +129,11 @@ namespace SalesforceMagic.ORM
         {
             return (from XmlNode node in GetNamedNodes(document, "records") select ReadSimpleResponse<T>(node, document)).ToArray();
         }
-        
+
+        internal static T[] ReadRetriveResponse<T>(XmlDocument document)
+        {
+            return (from XmlNode node in GetNamedNodes(document, "result") select ReadSimpleResponse<T>(node, document)).ToArray();
+        }
 
         public static QueryResult<T> ReadQueryResponse<T>(XmlDocument document)
         {
