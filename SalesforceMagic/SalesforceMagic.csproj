@@ -83,6 +83,7 @@
     <Compile Include="ORM\ResponseReader.cs" />
     <Compile Include="SoapApi\Enum\CrudOperations.cs" />
     <Compile Include="SoapApi\RequestTemplates\QueryMoreTemplate.cs" />
+    <Compile Include="SoapApi\RequestTemplates\RetrieveTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\UpsertTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\DeleteTemplate.cs" />
     <Compile Include="SoapApi\RequestTemplates\CrudTemplate.cs" />

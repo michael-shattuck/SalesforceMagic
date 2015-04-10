@@ -48,7 +48,7 @@ namespace SalesforceMagic.SoapApi
             HttpRequest request = new HttpRequest
             {
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
-                Body = SoapCommands.Query(query, session.SessionId),
+                Body = SoapCommands.Query(query, session),
                 Method = RequestType.POST,
                 Proxy = session.Proxy
             };
@@ -62,7 +62,7 @@ namespace SalesforceMagic.SoapApi
             HttpRequest request = new HttpRequest
             {
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
-                Body = SoapCommands.QueryMore(queryLocator, session.SessionId),
+                Body = SoapCommands.QueryMore(queryLocator, session),
                 Method = RequestType.POST,
                 Proxy = session.Proxy
             };
@@ -71,9 +71,24 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
+        internal static HttpRequest GetRetrieveRequest<T>(string[] ids, SalesforceSession session) where T : SObject
+        {
+            string body = SoapCommands.Retrieve<T>(ids, session);
+            HttpRequest request = new HttpRequest
+            {
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
+                Body = body,
+                Method = RequestType.POST,
+                Proxy = session.Proxy
+            };
+            request.Headers.Add("SOAPAction", "retrieve");
+
+            return request;
+        }
+
         internal static HttpRequest GetCrudRequest<T>(CrudOperation<T> operation, SalesforceSession session) where T : SObject
         {
-            string body = SoapCommands.CrudOperation(operation, session.SessionId);
+            string body = SoapCommands.CrudOperation(operation, session);
             HttpRequest request = new HttpRequest
             {
                 Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
