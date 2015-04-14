@@ -1,4 +1,5 @@
-﻿using SalesforceMagic.Configuration;
+﻿using System.Linq;
+using SalesforceMagic.Configuration;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Http;
 using SalesforceMagic.ORM.BaseRequestTemplates;
@@ -32,6 +33,17 @@ namespace SalesforceMagic.SoapApi
                 RetrieveTemplate = new RetrieveTemplate
                 {
                     Type = typeof(T),
+                    Ids = ids
+                }
+            }, BuildXmlHeader(session));
+        }
+
+        internal static string Delete(string[] ids, SalesforceSession session)
+        {
+            return XmlRequestGenerator.GenerateRequest(new XmlBody
+            {
+                DeleteTemplate = new DeleteTemplate
+                {
                     Ids = ids
                 }
             }, BuildXmlHeader(session));
@@ -79,7 +91,7 @@ namespace SalesforceMagic.SoapApi
                 case CrudOperations.Delete:
                     body.DeleteTemplate = new DeleteTemplate
                     {
-                        SObjects = operation.Items
+                        Ids = operation.Items.Select(i => i.Id).Distinct().ToArray()
                     };
                     break;
             }

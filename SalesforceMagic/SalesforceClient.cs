@@ -310,6 +310,16 @@ namespace SalesforceMagic
             return Delete<T>(new[] { item });
         }
 
+        public virtual SalesforceResponse Delete(string id)
+        {
+            return Delete(new[] { id });
+        }
+
+        public virtual SalesforceResponse Delete(string[] ids)
+        {
+            return PerformSimpleRequest(SoapRequestManager.GetDeleteRequest(ids, Login()));
+        }
+
         public virtual JobInfo CreateBulkJob<T>(JobConfig config)
         {
             return PerformGenericRequest<JobInfo>(BulkRequestManager.GetStartJobRequest<T>(config, Login()), "jobInfo");

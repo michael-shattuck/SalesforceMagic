@@ -86,6 +86,21 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
+        internal static HttpRequest GetDeleteRequest(string[] ids, SalesforceSession session)
+        {
+            string body = SoapCommands.Delete(ids, session);
+            HttpRequest request = new HttpRequest
+            {
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
+                Body = body,
+                Method = RequestType.POST,
+                Proxy = session.Proxy
+            };
+            request.Headers.Add("SOAPAction", "delete");
+
+            return request;
+        }
+
         internal static HttpRequest GetCrudRequest<T>(CrudOperation<T> operation, SalesforceSession session) where T : SObject
         {
             string body = SoapCommands.CrudOperation(operation, session);
