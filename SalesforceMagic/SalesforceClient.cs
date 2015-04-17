@@ -242,6 +242,31 @@ namespace SalesforceMagic
             return Query<T>(query).FirstOrDefault();
         }
 
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on all field types of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <returns></returns>
+        public IEnumerable<T> Search<T>(string searchQuery) where T : SObject
+        {
+            return PerformSearchRequest<T>(SoapRequestManager.GetSearchRequest<T>(searchQuery, "ALL", Login()));
+        }
+
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on fields of a given type of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <param name="fieldType">The field type. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_in.htm for more information.</param>
+        /// <returns></returns>
+        public IEnumerable<T> Search<T>(string searchQuery, string fieldType) where T : SObject
+        {
+            return PerformSearchRequest<T>(SoapRequestManager.GetSearchRequest<T>(searchQuery, fieldType, Login()));
+        }
+
         public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
         {
             if (operation.Items.Count() > 200)
@@ -435,6 +460,15 @@ namespace SalesforceMagic
             {
                 XmlDocument response = httpClient.PerformRequest(request);
                 return ResponseReader.ReadArrayResponse<T>(response);
+            }
+        }
+
+        private IEnumerable<T> PerformSearchRequest<T>(HttpRequest request) where T : SObject
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadSearchResponse<T>(response);
             }
         }
 

@@ -26,6 +26,14 @@ namespace SalesforceMagic.SoapApi
             }, BuildXmlHeader(session));
         }
 
+        public static string Search(string searchString, SalesforceSession session)
+        {
+            return XmlRequestGenerator.GenerateRequest(new XmlBody
+            {
+                SearchTemplate = new SearchTemplate(searchString)
+            }, BuildXmlHeader(session));
+        }
+
         internal static string Retrieve<T>(string[] ids, SalesforceSession session) where T : SObject
         {
             return XmlRequestGenerator.GenerateRequest(new XmlBody

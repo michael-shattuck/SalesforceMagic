@@ -145,6 +145,11 @@ namespace SalesforceMagic.ORM
             };
         }
 
+        internal static T[] ReadSearchResponse<T>(XmlDocument document)
+        {
+            return (from XmlNode node in GetNamedNodes(document, "record") select ReadSimpleResponse<T>(node, document)).ToArray();
+        }
+
         private static XmlNodeList GetNamedNodes(XmlDocument document, string name)
         {
             return document.GetElementsByTagName(name);

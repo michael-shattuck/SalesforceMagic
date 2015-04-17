@@ -71,6 +71,26 @@ namespace SalesforceMagic.SoapApi
             return request;
         }
 
+        internal static HttpRequest GetSearchRequest<T>(string searchQuery, string fieldType, SalesforceSession session) where T : SObject
+        {
+            string search = QueryBuilder.GenerateSearchQuery<T>(searchQuery, fieldType);
+            return GetSearchRequest(search, session);
+        }
+
+        public static HttpRequest GetSearchRequest(string searchString, SalesforceSession session)
+        {
+            HttpRequest request = new HttpRequest
+            {
+                Url = GetSoapUrl(session.InstanceUrl, session.ApiVersion),
+                Body = SoapCommands.Search(searchString, session),
+                Method = RequestType.POST,
+                Proxy = session.Proxy
+            };
+            request.Headers.Add("SOAPAction", "search");
+
+            return request;
+        }
+
         internal static HttpRequest GetRetrieveRequest<T>(string[] ids, SalesforceSession session) where T : SObject
         {
             string body = SoapCommands.Retrieve<T>(ids, session);

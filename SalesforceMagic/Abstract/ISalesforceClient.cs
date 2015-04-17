@@ -134,6 +134,25 @@ namespace SalesforceMagic.Abstract
         /// <returns></returns>
         T QuerySingle<T>(string query) where T : SObject;
 
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on all field types of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <returns></returns>
+        IEnumerable<T> Search<T>(string searchQuery) where T : SObject;
+
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on fields of a given type of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <param name="fieldType">The field type. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_in.htm for more information.</param>
+        /// <returns></returns>
+        IEnumerable<T> Search<T>(string searchQuery, string fieldType) where T : SObject;
+
         #endregion
 
         #region Crud Methods
