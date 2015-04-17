@@ -139,6 +139,24 @@ namespace SalesforceMagic.Abstract
         #region Crud Methods
 
         SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject;
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve a single record by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">the Id of the record to retrieve</param>
+        /// <returns></returns>
+        T Retrieve<T>(string id) where T : SObject;
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve multiple records by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ids">the ids of the records to retrieve</param>
+        /// <returns></returns>
+        IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject;
         SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject;
         SalesforceResponse Insert<T>(T item) where T : SObject;
         SalesforceResponse Upsert<T>(IEnumerable<T> items, string externalIdField) where T : SObject;
@@ -147,6 +165,22 @@ namespace SalesforceMagic.Abstract
         SalesforceResponse Update<T>(T item) where T : SObject;
         SalesforceResponse Delete<T>(IEnumerable<T> items) where T : SObject;
         SalesforceResponse Delete<T>(T item) where T : SObject;
+
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete a single record by id
+        /// </summary>
+        /// <param name="id">the Id of the record to delete</param>
+        /// <returns></returns>
+        SalesforceResponse Delete(string id);
+
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete multiple records by id
+        /// </summary>
+        /// <param name="ids">the ids of the records to delete</param>
+        /// <returns></returns>
+        SalesforceResponse Delete(string[] ids);
 
         #endregion
 

@@ -216,24 +216,30 @@ namespace SalesforceMagic
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryMoreRequest(queryLocator, Login()));
         }
 
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using filter criteria
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         public virtual T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject
         {
             return Query(predicate).FirstOrDefault();
         }
 
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using a raw string query
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual T QuerySingle<T>(string query) where T : SObject
         {
             return Query<T>(query).FirstOrDefault();
-        }
-
-        public virtual T Retrieve<T>(string id) where T : SObject
-        {
-            return Retrieve<T>(new [] { id }).FirstOrDefault();
-        }
-
-        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
-        {
-            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
         }
 
         public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
@@ -247,6 +253,30 @@ namespace SalesforceMagic
                 throw new SalesforceRequestException("Upsert requests required an external ID name field to be specified.");
 
             return PerformSimpleRequest(SoapRequestManager.GetCrudRequest(operation, Login()));
+        }
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve a single record by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">the Id of the record to retrieve</param>
+        /// <returns></returns>
+        public virtual T Retrieve<T>(string id) where T : SObject
+        {
+            return Retrieve<T>(new[] { id }).FirstOrDefault();
+        }
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve multiple records by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ids">the ids of the records to retrieve</param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
+        {
+            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
         }
 
         public virtual SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject
@@ -310,11 +340,23 @@ namespace SalesforceMagic
             return Delete<T>(new[] { item });
         }
 
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete a single record by id
+        /// </summary>
+        /// <param name="id">the Id of the record to delete</param>
+        /// <returns></returns>
         public virtual SalesforceResponse Delete(string id)
         {
             return Delete(new[] { id });
         }
 
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete multiple records by id
+        /// </summary>
+        /// <param name="ids">the ids of the records to delete</param>
+        /// <returns></returns>
         public virtual SalesforceResponse Delete(string[] ids)
         {
             return PerformSimpleRequest(SoapRequestManager.GetDeleteRequest(ids, Login()));
