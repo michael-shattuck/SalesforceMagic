@@ -38,6 +38,12 @@ namespace SalesforceMagic.ORM
             return query;
         }
 
+        internal static string GenerateSearchQuery<T>(string searchQuery, string fieldType)
+        {
+            Type type = typeof(T);
+            return string.Format("FIND {0} IN {1} FIELDS RETURNING {2}({3})", "{" + searchQuery + "}", fieldType, type.GetName(), string.Join(", ", type.GetPropertyNames(true)));
+        }
+
         private static string CompileSelectStatements(Type type)
         {
             return string.Format("SELECT {0} FROM {1}", string.Join(", ", type.GetPropertyNames(true)), type.GetName());

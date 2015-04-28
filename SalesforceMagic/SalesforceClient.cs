@@ -216,24 +216,55 @@ namespace SalesforceMagic
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryMoreRequest(queryLocator, Login()));
         }
 
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using filter criteria
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         public virtual T QuerySingle<T>(Expression<Func<T, bool>> predicate) where T : SObject
         {
             return Query(predicate).FirstOrDefault();
         }
 
+        /// <summary>
+        ///     Query Single
+        ///      - Used to retrieve a single record
+        ///        using a raw string query
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual T QuerySingle<T>(string query) where T : SObject
         {
             return Query<T>(query).FirstOrDefault();
         }
 
-        public virtual T Retrieve<T>(string id) where T : SObject
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on all field types of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <returns></returns>
+        public IEnumerable<T> Search<T>(string searchQuery) where T : SObject
         {
-            return Retrieve<T>(new [] { id }).FirstOrDefault();
+            return PerformSearchRequest<T>(SoapRequestManager.GetSearchRequest<T>(searchQuery, "ALL", Login()));
         }
 
-        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
+        /// <summary>
+        ///     Search
+        ///      - Used for searching on fields of a given type of a single sObject type
+        /// </summary>
+        /// <typeparam name="T">The sObject type to search.</typeparam>
+        /// <param name="searchQuery">The search query to search with. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_find.htm for more information.</param>
+        /// <param name="fieldType">The field type. See http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_sosl_in.htm for more information.</param>
+        /// <returns></returns>
+        public IEnumerable<T> Search<T>(string searchQuery, string fieldType) where T : SObject
         {
-            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
+            return PerformSearchRequest<T>(SoapRequestManager.GetSearchRequest<T>(searchQuery, fieldType, Login()));
         }
 
         public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
@@ -247,6 +278,30 @@ namespace SalesforceMagic
                 throw new SalesforceRequestException("Upsert requests required an external ID name field to be specified.");
 
             return PerformSimpleRequest(SoapRequestManager.GetCrudRequest(operation, Login()));
+        }
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve a single record by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id">the Id of the record to retrieve</param>
+        /// <returns></returns>
+        public virtual T Retrieve<T>(string id) where T : SObject
+        {
+            return Retrieve<T>(new[] { id }).FirstOrDefault();
+        }
+
+        /// <summary>
+        ///     Retrieve
+        ///      - Used to retrieve multiple records by id
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ids">the ids of the records to retrieve</param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
+        {
+            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
         }
 
         public virtual SalesforceResponse Insert<T>(IEnumerable<T> items) where T : SObject
@@ -308,6 +363,28 @@ namespace SalesforceMagic
         public virtual SalesforceResponse Delete<T>(T item) where T : SObject
         {
             return Delete<T>(new[] { item });
+        }
+
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete a single record by id
+        /// </summary>
+        /// <param name="id">the Id of the record to delete</param>
+        /// <returns></returns>
+        public virtual SalesforceResponse Delete(string id)
+        {
+            return Delete(new[] { id });
+        }
+
+        /// <summary>
+        ///     Delete
+        ///      - Used to delete multiple records by id
+        /// </summary>
+        /// <param name="ids">the ids of the records to delete</param>
+        /// <returns></returns>
+        public virtual SalesforceResponse Delete(string[] ids)
+        {
+            return PerformSimpleRequest(SoapRequestManager.GetDeleteRequest(ids, Login()));
         }
 
         public virtual JobInfo CreateBulkJob<T>(JobConfig config)
@@ -383,6 +460,15 @@ namespace SalesforceMagic
             {
                 XmlDocument response = httpClient.PerformRequest(request);
                 return ResponseReader.ReadArrayResponse<T>(response);
+            }
+        }
+
+        private IEnumerable<T> PerformSearchRequest<T>(HttpRequest request) where T : SObject
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadSearchResponse<T>(response);
             }
         }
 
