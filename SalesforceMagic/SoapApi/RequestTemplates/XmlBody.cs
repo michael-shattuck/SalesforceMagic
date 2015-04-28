@@ -28,5 +28,8 @@ namespace SalesforceMagic.ORM.BaseRequestTemplates
 
         [XmlElement("retrieve", Namespace = SalesforceNamespaces.SalesforceRequest)]
         public RetrieveTemplate RetrieveTemplate { get; set; }
+
+        [XmlElement("search", Namespace = SalesforceNamespaces.SalesforceRequest)]
+        public SearchTemplate SearchTemplate { get; set; }
     }
 }
