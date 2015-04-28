@@ -23,7 +23,7 @@ namespace SalesforceMagic.ORM
         internal static bool ReadBoolResponse(string name, XmlDocument document)
         {
             XmlNode node = GetSingleNamedNodes(document, name);
-            return node != null ? Convert.ToBoolean(node.InnerText) : default(bool);
+            return node != null && Convert.ToBoolean(node.InnerText);
         }
 
         internal static int ReadCountResponse(string name, XmlDocument document)
@@ -77,25 +77,35 @@ namespace SalesforceMagic.ORM
 
             foreach (PropertyInfo property in type.FilterProperties<SalesforceIgnore>())
             {
-                string value;
+                string value = null;
                 Type propertyType = property.PropertyType;
-                string name = ns ? "sf:" + property.GetName() : property.GetName();
+                string propertyName = property.GetName();
 
-                if (name.Contains("."))
+                if (propertyName.Contains("."))
                 {
-                    string referencedProperty = name.Substring(name.LastIndexOf(".", StringComparison.Ordinal) + 1);
-                    referencedProperty = ns ? "sf:" + referencedProperty : referencedProperty;
-                    name = name.Substring(0, name.LastIndexOf(".", StringComparison.Ordinal));
-                    XmlNode referencedNode = FindChildNode(name, node);
-                    if (referencedNode == null) continue;
+                    string[] propertyNameSplit = propertyName.Split('.');
 
-                    value = referencedNode.GetValue(referencedProperty);
+                    XmlNode referencedNode = null;
+                    XmlNode currentNode = node;
+                    for (int i = 0; i < (propertyNameSplit.Count() - 1); i++)
+                    {
+                        referencedNode = FindChildNode(ns ? string.Format("sf:{0}", propertyNameSplit[i]) : propertyNameSplit[i], currentNode);
+                        if (referencedNode == null) 
+                            break;
+
+                        currentNode = referencedNode;
+                    }
+
+                    if (referencedNode != null)
+                        value = referencedNode.GetValue(ns 
+                            ? string.Format("sf:{0}", propertyNameSplit[(propertyNameSplit.Count() - 1)]) 
+                            : propertyNameSplit[(propertyNameSplit.Count() - 1)]);
                 }
-                else value = node.GetValue(name);
+                else value = node.GetValue(ns ? string.Format("sf:{0}", propertyName) : propertyName);
 
                 if (value == null)
                 {
-                    IEnumerable<XElement> nodes = GetNamedNodes(node, name);
+                    IEnumerable<XElement> nodes = GetNamedNodes(node, propertyName);
                     if (nodes == null || !nodes.Any()) continue;
                     XElement child = nodes.FirstOrDefault();
                     if (child == null) continue;

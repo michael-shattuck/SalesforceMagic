@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using SalesforceMagic.Configuration;
 using SalesforceMagic.Entities;
 using SalesforceMagic.Http;
@@ -80,20 +81,20 @@ namespace SalesforceMagic.SoapApi
                 case CrudOperations.Insert:
                     body.InsertTemplate = new BasicCrudTemplate
                     {
-                        SObjects = operation.Items
+                        SObjects = GetCrudItems(operation.Items, CrudOperations.Insert)
                     };
                     break;
                 case CrudOperations.Upsert:
                     body.UpsertTemplate = new UpsertTemplate
                     {
-                        SObjects = operation.Items,
+                        SObjects = GetCrudItems(operation.Items, CrudOperations.Upsert),
                         ExternalIdFieldName = operation.ExternalIdField
                     };
                     break;
                 case CrudOperations.Update:
                     body.UpdateTemplate = new BasicCrudTemplate
                     {
-                        SObjects = operation.Items
+                        SObjects = GetCrudItems(operation.Items, CrudOperations.Update)
                     };
                     break;
                 case CrudOperations.Delete:
@@ -105,6 +106,17 @@ namespace SalesforceMagic.SoapApi
             }
 
             return body;
+        }
+
+        private static IEnumerable<T> GetCrudItems<T>(IEnumerable<T> items, CrudOperations type) where T : SObject
+        {
+            // TODO: Need to find a better way to have the operationtype 
+            //       available during xml serialization of the objects, this is not the best
+            return items.Select(x =>
+            {
+                x.OperationType = type;
+                return x;
+            }).ToArray();
         }
 
         private static XmlHeader BuildXmlHeader(SalesforceSession session)
