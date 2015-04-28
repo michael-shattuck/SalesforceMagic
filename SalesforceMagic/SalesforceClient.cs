@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Xml;
 using SalesforceMagic.Abstract;
 using SalesforceMagic.BulkApi;
@@ -90,7 +89,8 @@ namespace SalesforceMagic
                         LastLogin = DateTime.Now,
                         InstanceUrl = instanceUrl.Scheme + "://" + instanceUrl.Host,
                         SessionId = result.SessionId,
-                        Proxy = _config.Proxy
+                        Proxy = _config.Proxy,
+                        BatchSize = _config.BatchSize,
                     };
 
                     if (_config.UseSessionStore) _sessionStore.StoreSession(session);
@@ -152,7 +152,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual IEnumerable<T> Query<T>(string query)
+        public virtual IEnumerable<T> Query<T>(string query) where T : SObject
         {
             // TODO: Validate query
             return PerformArrayRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
@@ -198,7 +198,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public QueryResult<T> AdvancedQuery<T>(string query)
+        public QueryResult<T> AdvancedQuery<T>(string query) where T : SObject
         {
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryRequest(query, Login()));
         }
@@ -211,7 +211,7 @@ namespace SalesforceMagic
         /// <typeparam name="T"></typeparam>
         /// <param name="queryLocator"></param>
         /// <returns></returns>
-        public QueryResult<T> QueryMore<T>(string queryLocator)
+        public QueryResult<T> QueryMore<T>(string queryLocator) where T : SObject
         {
             return PerformQueryRequest<T>(SoapRequestManager.GetQueryMoreRequest(queryLocator, Login()));
         }
@@ -221,9 +221,19 @@ namespace SalesforceMagic
             return Query(predicate).FirstOrDefault();
         }
 
-        public virtual T QuerySingle<T>(string query)
+        public virtual T QuerySingle<T>(string query) where T : SObject
         {
             return Query<T>(query).FirstOrDefault();
+        }
+
+        public virtual T Retrieve<T>(string id) where T : SObject
+        {
+            return Retrieve<T>(new [] { id }).FirstOrDefault();
+        }
+
+        public virtual IEnumerable<T> Retrieve<T>(string[] ids) where T : SObject
+        {
+            return PerformRetrieveRequest<T>(SoapRequestManager.GetRetrieveRequest<T>(ids, Login()));
         }
 
         public virtual SalesforceResponse Crud<T>(CrudOperation<T> operation) where T : SObject
@@ -367,7 +377,7 @@ namespace SalesforceMagic
             }
         }
 
-        private IEnumerable<T> PerformArrayRequest<T>(HttpRequest request)
+        private IEnumerable<T> PerformArrayRequest<T>(HttpRequest request) where T : SObject
         {
             using (HttpClient httpClient = new HttpClient())
             {
@@ -376,7 +386,16 @@ namespace SalesforceMagic
             }
         }
 
-        private QueryResult<T> PerformQueryRequest<T>(HttpRequest request)
+        private IEnumerable<T> PerformRetrieveRequest<T>(HttpRequest request) where T : SObject
+        {
+            using (HttpClient httpClient = new HttpClient())
+            {
+                XmlDocument response = httpClient.PerformRequest(request);
+                return ResponseReader.ReadRetriveResponse<T>(response);
+            }
+        }
+
+        private QueryResult<T> PerformQueryRequest<T>(HttpRequest request) where T : SObject
         {
             using (HttpClient httpClient = new HttpClient())
             {
