@@ -308,6 +308,7 @@ namespace SalesforceMagic
         {
             return Crud(new CrudOperation<T>
             {
+                Items = items,
                 OperationType = CrudOperations.Insert
             });
         }
