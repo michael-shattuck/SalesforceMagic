@@ -94,7 +94,10 @@ namespace SalesforceMagic.Extensions
         {
             try
             {
-                return Convert.ToDouble(value);
+                if (String.IsNullOrEmpty(value))
+                    return 0.0;
+                else
+                    return Convert.ToDouble(value);
             }
             catch (FormatException e) { throw new SalesforceRequestException(e.Message); }
         }
