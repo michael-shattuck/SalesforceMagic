@@ -16,6 +16,9 @@ namespace SalesforceMagic.Http
     /// </summary>
     internal class HttpClient : IDisposable
     {
+        // Flag: Has Dispose already been called?
+        private bool disposed = false;
+
         /// <summary>
         ///     Abstraction method for performing a http request.
         /// </summary>
@@ -24,28 +27,33 @@ namespace SalesforceMagic.Http
         /// <returns></returns>
         internal XmlDocument PerformRequest(HttpRequest request)
         {
+            WebResponse response = null;
+            Stream responseStream = null;
+
             try
             {
                 WebRequest webRequest = GenerateWebRequest(request);
 
-                using (WebResponse response = webRequest.GetResponse())
-                using (Stream responseStream = response.GetResponseStream())
+                response = webRequest.GetResponse();
+                responseStream = response.GetResponseStream();
+                if (responseStream == null)
                 {
-                    if (responseStream == null) throw new SalesforceRequestException("The request to {0} returned no response.", request.Url);
-
-                    XmlDocument xml = new XmlDocument();
-                    using (StreamReader reader = new StreamReader(responseStream))
-                    {
-                        xml.LoadXml(reader.ReadToEnd());
-                        response.Close();
-
-                        return xml;
-                    }
+                    throw new SalesforceRequestException("The request to {0} returned no response.", request.Url);
                 }
+
+                XmlDocument xml = new XmlDocument();
+                StreamReader reader = new StreamReader(responseStream);
+                xml.LoadXml(reader.ReadToEnd());
+
+                responseStream.Close();
+                response.Close();
+                reader.Close();
+
+                return xml;
             }
             catch (WebException e)
             {
-                using (Stream responseStream = e.Response.GetResponseStream())
+                using (responseStream = e.Response.GetResponseStream())
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
                     string rawResponse = reader.ReadToEnd();
@@ -54,9 +62,21 @@ namespace SalesforceMagic.Http
                     // TODO: This is retarded
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(rawResponse);
-                    XmlNode response = ParseFailure(rawResponse, xml);
+                    XmlNode node = ParseFailure(rawResponse, xml);
 
-                    throw new SalesforceRequestException(response != null ? response.FirstChild.Value : rawResponse);
+                    throw new SalesforceRequestException(node != null ? node.FirstChild.Value : rawResponse);
+                }
+            }
+            finally
+            {
+                if (!object.ReferenceEquals(null, responseStream))
+                {
+                    responseStream.Dispose();
+                }
+
+                if (!object.ReferenceEquals(null, response))
+                {
+                    response.Dispose();
                 }
             }
         }
@@ -128,11 +148,26 @@ namespace SalesforceMagic.Http
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public void Dispose(bool safe)
+        protected virtual void Dispose(bool disposing)
         {
-            // TODO: Implement IDisposable
+            if (this.disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                //
+            }
+
+            // Free any unmanaged objects here.
+            //
+
+            this.disposed = true;
         }
 
         ~HttpClient()

@@ -10,7 +10,7 @@ namespace SalesforceMagic.BulkApi
 {
     internal static class BulkRequestManager
     {
-        internal static string DefaultApiVersion = "30.0";
+        internal static string DefaultApiVersion = "38.0";
         internal static string BulkApiUrl = "/services/async/";
 
         public static HttpRequest GetStartJobRequest<T>(JobConfig config, SalesforceSession session)

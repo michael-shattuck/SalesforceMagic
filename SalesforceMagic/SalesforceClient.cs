@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Xml;
 using SalesforceMagic.Abstract;
 using SalesforceMagic.BulkApi;
@@ -64,6 +65,8 @@ namespace SalesforceMagic
 
         public SalesforceSession Login()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             lock (Lock)
             {
                 SalesforceSession session;
