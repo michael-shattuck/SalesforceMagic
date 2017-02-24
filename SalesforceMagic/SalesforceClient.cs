@@ -40,7 +40,7 @@ namespace SalesforceMagic
         }
 
         public SalesforceClient(SalesforceConfig config, bool login = false, SecurityProtocolType securityProtocol = SecurityProtocolType.Tls11)
-            : this(new MemoryCacheProvider(), config, login)
+            : this(new MemoryCacheProvider(), config, login, securityProtocol)
         {
         }
 
