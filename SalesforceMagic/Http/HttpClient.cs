@@ -158,15 +158,6 @@ namespace SalesforceMagic.Http
                 return;
             }
 
-            if (disposing)
-            {
-                // Free any other managed objects here.
-                //
-            }
-
-            // Free any unmanaged objects here.
-            //
-
             this.disposed = true;
         }
 

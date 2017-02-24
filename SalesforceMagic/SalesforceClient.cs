@@ -33,22 +33,20 @@ namespace SalesforceMagic
         private static readonly object Lock = new object();
         #endregion
 
-        public SalesforceClient(ISessionStoreProvider sessionStore, SalesforceConfig config, bool login = false)
+        public SalesforceClient(ISessionStoreProvider sessionStore, SalesforceConfig config, bool login = false, SecurityProtocolType securityProtocol = SecurityProtocolType.Tls11)
         {
             _sessionStore = sessionStore;
-            _config = config;
-            if (login) Login();
+            this.ChangeEnvironment(config, login, securityProtocol);
         }
 
-        public SalesforceClient(SalesforceConfig config, bool login = false)
+        public SalesforceClient(SalesforceConfig config, bool login = false, SecurityProtocolType securityProtocol = SecurityProtocolType.Tls11)
+            : this(new MemoryCacheProvider(), config, login)
         {
-            _sessionStore = new MemoryCacheProvider();
-            _config = config;
-            if (login) Login();
         }
 
-        public virtual void ChangeEnvironment(SalesforceConfig config, bool login = false)
+        public virtual void ChangeEnvironment(SalesforceConfig config, bool login = false, SecurityProtocolType securityProtocol = SecurityProtocolType.Tls11)
         {
+            ServicePointManager.SecurityProtocol = securityProtocol;
             _config = config;
             if (login) Login();
         }
@@ -65,8 +63,6 @@ namespace SalesforceMagic
 
         public SalesforceSession Login()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             lock (Lock)
             {
                 SalesforceSession session;
