@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Net;
 using SalesforceMagic.BulkApi.Configuration;
 using SalesforceMagic.BulkApi.Models;
 using SalesforceMagic.Configuration;
@@ -12,7 +13,7 @@ namespace SalesforceMagic.Abstract
     {
         #region Utility Methods
 
-        void ChangeEnvironment(SalesforceConfig config, bool login = false);
+        void ChangeEnvironment(SalesforceConfig config, bool login = false, SecurityProtocolType securityProtocol = SecurityProtocolType.Tls11);
         string GetSessionId();
         SalesforceSession GetSession();
         SalesforceSession Login();
